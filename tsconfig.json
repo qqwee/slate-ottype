@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "jsx": "preserve",
+    "noImplicitAny": false,
+    "outDir": "./build/",
+    "preserveConstEnums": true,
+    "removeComments": true,
+    "target": "ES5",
+    "experimentalDecorators": true,
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "noEmit": true,
+    "isolatedModules": true
+  },
+  "include": [
+    "src"
+  ]
+}
