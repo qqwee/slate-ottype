@@ -3,8 +3,14 @@ import { Value } from 'slate';
 import React from 'react';
 import { CodeNode } from './Editor.utils';
 import { BoldMark } from './Editor.marks';
+import { MarkHotKey } from './Editor.plugins';
 
-const initValue = Value.fromJSON({
+// This is still actually quite tricky, since getItem returns string | null
+// But JSON.parser only accepts string values.
+const inStorage = localStorage.getItem('content');
+const existingValue = JSON.parse(inStorage ? inStorage : '{}');
+const initValue = Value.fromJSON(
+    existingValue || {
     document: {
         nodes: [
             {
@@ -26,11 +32,13 @@ const initValue = Value.fromJSON({
     },
 });
 
-// const editorStyle = {
-//     height: '80vh',
-//     width: '80%',
-//     borderStyle: 'solid'
-// };
+const plugins = [
+    MarkHotKey({ key: 'b', type: 'bold' }),
+    MarkHotKey({ key: '`', type: 'code' }),
+    MarkHotKey({ key: 'i', type: 'italic' }),
+    MarkHotKey({ key: '~', type: 'strikethrough' }),
+    MarkHotKey({ key: 'u', type: 'underline' }),
+  ]
 
 class SlateEditor extends React.Component {
     state = {
@@ -39,39 +47,19 @@ class SlateEditor extends React.Component {
     render() {
         return (
             <Editor
+                plugins={plugins}
                 value={this.state.value}
-                style={editorStyle}
                 onChange={this.onChange}
-                onKeyDown={this.onKeyDown}
                 renderNode={this.renderNode}
                 renderMark={this.renderMark}
             />
         );
     }
     onChange = ({value}) => {
+        const content = JSON.stringify(value.toJSON());
         this.setState({value});
+        localStorage.setItem('content', content);
     };
-    onKeyDown = (event, editor, next) => {
-        if (!event.ctrlKey) {
-            return next();
-        }
-        console.log(event.key);
-        switch(event.key) {
-            case 'b': {
-                event.preventDefault();
-                editor.toggleMark('bold');
-                break;
-            }
-            case '`': {
-                event.preventDefault();
-                const isCode = editor.value.blocks.some(b => b.type === 'code');
-                editor.setBlocks(isCode ? 'paragraph' : 'code');
-            }
-            default: {
-                return next(); 
-            }
-        }
-    }
     renderNode = (props, editor, next) => {
         switch (props.node.type) {
             case 'code':
@@ -83,7 +71,15 @@ class SlateEditor extends React.Component {
     renderMark = (props, editor, next) => {
         switch (props.mark.type) {
             case 'bold':
-                return <BoldMark {...props} />
+                return (<strong>{props.children}</strong>);
+            case 'code':
+                return (<code>{props.children}</code>);
+            case 'italic':
+                return (<em>{props.children}</em>);
+            case 'strikethrough':
+                return (<del>{props.children}</del>);
+            case 'underline':
+                return (<u>{props.children}</u>);
             default:
                 return next();
         }

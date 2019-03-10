@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
-import SlateEditor from './components/Editor';
+// import SlateEditor from './components/Editor';
+import EditorHTML from './components/Editor.html';
 
 class App extends Component {
   render() {
     return (
       <div className="App">
-        <SlateEditor />
+        <EditorHTML />
+        {/* <SlateEditor /> */}
       </div>
     );
   }
