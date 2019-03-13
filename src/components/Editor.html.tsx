@@ -1,10 +1,19 @@
 import React from 'react';
 import { Editor } from 'slate-react';
 import HTML from 'slate-html-serializer';
+import { MarkHotKey } from './Editor.plugins';
+
+const plugins = [
+    MarkHotKey({ key: 'b', type: 'bold' }),
+    MarkHotKey({ key: '`', type: 'code' }),
+    MarkHotKey({ key: 'i', type: 'italic' }),
+    MarkHotKey({ key: '~', type: 'strikethrough' }),
+    MarkHotKey({ key: 'u', type: 'underline' }),
+];
 
 const BLOCK_TAGS = {
-    p: 'paragraph',
     blockquote: 'quote',
+    p: 'paragraph',
     pre: 'code',
 };
 
@@ -12,7 +21,7 @@ const MARK_TAGS = {
     em: 'italic',
     strong: 'bold',
     u: 'underline',
-};
+};  
 
 const rules = [
     {
@@ -25,12 +34,11 @@ const rules = [
                     data: {
                         className: el.getAttribute('class'),
                     },
-                    nodes: next(el.childNdoes),
+                    nodes: next(el.childNodes),
                 }
             }
         },
         serialize (obj, children) {
-            console.log(children);
             if (obj.object === 'block') {
                 switch (obj.type) {
                     case 'paragraph':
@@ -62,11 +70,11 @@ const rules = [
             if (obj.object === 'mark') {
                 switch (obj.type) {
                     case 'bold':
-                        return <strong>children</strong>;
+                        return <strong>{children}</strong>;
                     case 'italics':
-                        return <em>children</em>;
+                        return <em>{children}</em>;
                     case 'underline':
-                        return <u>childrne</u>;
+                        return <u>{children}</u>;
                 }
             }
         }
@@ -82,7 +90,11 @@ class EditorTestHTML extends React.Component {
         value: html.deserialize(initialValue),
     }
 
-    onChange = ({value}) => {
+    onChange = (change) => {
+        const value = change.value;
+        change.operations.forEach(o => {
+            console.log(o.toJS());
+        });
         if (value.document !== this.state.value.document) {
             console.log('Saving');
             const string = html.serialize(value);
@@ -94,6 +106,7 @@ class EditorTestHTML extends React.Component {
     render() {
         return (
             <Editor
+                plugins={plugins}
                 value={this.state.value}
                 onChange={this.onChange}
                 renderNode={this.renderNode}
