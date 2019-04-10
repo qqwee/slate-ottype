@@ -1,7 +1,13 @@
 import React from 'react';
+import { Value } from 'slate';
+const { Operation } = require('slate');
 import { Editor } from 'slate-react';
 import HTML from 'slate-html-serializer';
 import { MarkHotKey } from './Editor.plugins';
+import connection from '../modules/Connetion';
+import { deepEqual } from 'assert';
+import uuid4 from 'uuid4';
+// import { styledMenu } from './Editor.menu';
 
 const plugins = [
     MarkHotKey({ key: 'b', type: 'bold' }),
@@ -21,9 +27,9 @@ const MARK_TAGS = {
     em: 'italic',
     strong: 'bold',
     u: 'underline',
-};  
+};
 
-const rules = [
+export const rules = [
     {
         deserialize (el, next) {
             const type = BLOCK_TAGS[el.tagName.toLowerCase()];
@@ -81,26 +87,72 @@ const rules = [
     },
 ];
 
-const html = new HTML({rules});
+export const html = new HTML({rules});
 
 const initialValue = localStorage.getItem('content') || '<p></p>';
 
-class EditorTestHTML extends React.Component {
-    state = {
-        value: html.deserialize(initialValue),
-    }
+interface IProps {
+    opsChanger: (o:any) => void;
+}
 
-    onChange = (change) => {
-        const value = change.value;
-        change.operations.forEach(o => {
-            console.log(o.toJS());
-        });
-        if (value.document !== this.state.value.document) {
-            console.log('Saving');
-            const string = html.serialize(value);
-            localStorage.setItem('content', string);
+class EditorTestHTML extends React.Component<IProps, any>{
+    private doc;
+    private userId;
+    state = {
+        value: Value.create({}),
+    }
+    private _setDoc = () => {
+        this.doc = connection.get('examples', 'richtext');
+        console.log('Doc');
+        console.log(this.doc);
+        this.doc.subscribe( err => {
+            if (err) {
+                console.log('err' + err);
+                throw err;
+            }
+            this.setState({value: Value.create(this.doc.data)});
+            console.log('Successful subscription');
+            console.log(this.doc.data);
+            this.doc.on('op', (op, source) => {
+                console.log('incoming ops');
+                if (source === this.userId) return;
+                this.setState({
+                    value: Operation.create(op).apply(this.state.value),
+                });
+            });
+          });
+    }
+    componentWillMount = () => {
+        if (!this.doc) {
+            this._setDoc();
         }
-        this.setState({value});
+        if (!this.userId) {
+            this.userId = uuid4();
+        }
+    };
+    onChange = ({value, operations}) => {
+        // console.log(value);
+        // console.log(JSON.stringify(value.toJSON()));
+        const { opsChanger } = this.props;
+        opsChanger(operations);
+        // const filteredOps = (operations as any[]).filter(e => e.type !== 'set_selection');
+        // opsChanger(filteredOps);
+        // let transformedValue = this.state.value;
+        // operations.forEach(o => {
+        //     o.apply(transformedValue);
+        // });
+        operations.forEach(o => {
+            if (o.type !== 'set_selection') {
+                this.doc.submitOp(o.toJSON(), {source: this.userId});
+            }
+        });
+        console.log('vaue');
+        console.log(JSON.parse(JSON.stringify(value.toJSON())));
+        console.log('texts');
+        // console.log(JSON.parse(JSON.stringify(value.document.getTexts().map(text => text.key))));
+        const texts = JSON.parse(JSON.stringify(value.document.getTexts()));
+        console.log();
+        this.setState({ value });
     }
 
     render() {
@@ -116,7 +168,6 @@ class EditorTestHTML extends React.Component {
     }
 
     renderNode = (props, editor, next) => {
-        console.log('We have' + props.node.type);
         switch (props.node.type) {
             case 'code':
                 return (

@@ -8,7 +8,7 @@ import { MarkHotKey } from './Editor.plugins';
 // This is still actually quite tricky, since getItem returns string | null
 // But JSON.parser only accepts string values.
 const inStorage = localStorage.getItem('content');
-const existingValue = JSON.parse(inStorage ? inStorage : '{}');
+const existingValue = JSON.parse(inStorage ? '{}' : '{}');
 const initValue = Value.fromJSON(
     existingValue || {
     document: {
@@ -40,8 +40,12 @@ const plugins = [
     MarkHotKey({ key: 'u', type: 'underline' }),
   ]
 
-class SlateEditor extends React.Component {
+  interface IProps {
+    opsChanger: (o:any) => void;
+}
+class SlateEditor extends React.Component<IProps, any> {
     state = {
+        //value: initValue,
         value: initValue,
     };
     render() {
@@ -55,9 +59,12 @@ class SlateEditor extends React.Component {
             />
         );
     }
-    onChange = ({value}) => {
+    onChange = ({value, operations}) => {
         const content = JSON.stringify(value.toJSON());
+        // console.log(content);
         this.setState({value});
+        // const { opsChanger } = this.props;
+        // opsChanger(operations);
         localStorage.setItem('content', content);
     };
     renderNode = (props, editor, next) => {
