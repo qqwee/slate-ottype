@@ -1,6 +1,12 @@
 # slate-ottype
 This repository is an attempt to supply SlateJS with real-time collaboration through operational transformation using ShareDB and a custom ottype.
 
+# Install
+Run
+```
+    npm install
+```
+
 # How to start
 To start the demo slate with a server. Run the following two commands.
 ```
