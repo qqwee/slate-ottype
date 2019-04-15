@@ -15,3 +15,6 @@ To start the demo slate with a server. Run the following two commands.
 
 # Folder structure
 /src/ot/ folder contains all the code needed for operational transformation.
+
+# Short introduction to operational transformation and ShareDB.
+Please see this short [PDF](/theory.pdf).
