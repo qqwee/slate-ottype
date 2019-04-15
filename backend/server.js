@@ -1,7 +1,7 @@
 var http = require('http');
 var express = require('express');
 var ShareDB = require('sharedb');
-const slateType = require('../src/ot/SlateType');
+import slateType from '../src/ot/SlateType';
 var WebSocket = require('ws');
 var WebSocketJSONStream = require('websocket-json-stream');
 
@@ -15,7 +15,6 @@ function createDoc(callback) {
   const doc = connection.get('examples', 'richtext');
   doc.fetch(function(err) {
     if (err) throw err;
-    // console.log(doc);
     if (doc.type === null) {
       console.log('Creating document');
         doc.create({

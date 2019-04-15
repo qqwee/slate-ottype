@@ -1,8 +1,7 @@
 var _ = require('lodash');
-var { testDoc } = require('./fuzzer.test');
-var expect = require('chai').expect;
+import { testDoc } from './fuzzer.test';
 var fuzzer = require('ot-fuzzer');
-var slateType = require('../SlateType');
+import slateType from '../SlateType';
 var Value = slateType.Value;
 var Operation = slateType.Operation;
 
@@ -63,10 +62,9 @@ var generateRandomOp = function(snapshot) {
 
 //get a random path in a snapshot
 const getRandomLeafWithPath = (snapshot) => {
-    // console.log(snapshot);
     console.log('getting random leaf with path');
     const leaves = getAllTextLeafsWithPaths(snapshot);
-    result = leaves[fuzzer.randomInt(leaves.length)];
+    const result = leaves[fuzzer.randomInt(leaves.length)];
     return result;
 }
 
@@ -74,7 +72,6 @@ const getRandomLeafWithPath = (snapshot) => {
 const generateRandomInsertTextOp = (snapshot) => {
    
     console.log('generate random insert text operation');
-    // console.log(snapshot.toJSON().document);
     const randomLeaf = getRandomLeafWithPath(snapshot.toJSON().document);
     const randomPath = randomLeaf.path;
 
@@ -91,7 +88,5 @@ const generateRandomInsertTextOp = (snapshot) => {
 }
 
 fuzzer(slateType.type, generateRandomOp, 100);
-/*
-module.exports = {
-    getAllTextLeafsWithPaths,
-}*/
+
+export const dummy = {};

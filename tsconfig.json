@@ -22,7 +22,7 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "noEmit": true,
-    "isolatedModules": false
+    "isolatedModules": true
   },
   "include": [
     "src"

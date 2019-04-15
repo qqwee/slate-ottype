@@ -1,4 +1,4 @@
-var { Transform } = require('./Transformation');
+import { Transform } from'./Transformation';
 
 const OperationTypes = {
     INSERT_TEXT: 'insert_text',
@@ -261,7 +261,7 @@ const Selector = {
     }
 }
 
-module.exports = {
+export {
     OperationTypes,
     Selector
 };

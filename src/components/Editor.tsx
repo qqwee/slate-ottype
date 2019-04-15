@@ -1,36 +1,10 @@
-import { Editor } from 'slate-react';
-import { Value } from 'slate';
 import React from 'react';
-import { CodeNode } from './Editor.utils';
-import { BoldMark } from './Editor.marks';
+import { Value } from 'slate';
+import { Editor } from 'slate-react';
 import { MarkHotKey } from './Editor.plugins';
-
-// This is still actually quite tricky, since getItem returns string | null
-// But JSON.parser only accepts string values.
-const inStorage = localStorage.getItem('content');
-const existingValue = JSON.parse(inStorage ? '{}' : '{}');
-const initValue = Value.fromJSON(
-    existingValue || {
-    document: {
-        nodes: [
-            {
-                object: 'block',
-                type: 'paragraph',
-                nodes: [
-                    {
-                        object: 'text',
-                        leaves: [
-                            {
-                                object: 'leaf',
-                                text: 'A line of text in a paragraph.',
-                            },
-                        ],
-                    },
-                ],
-            },
-        ],
-    },
-});
+import connection from '../modules/Connetion';
+import uuid4 from 'uuid4';
+const { Operation } = require('slate');
 
 const plugins = [
     MarkHotKey({ key: 'b', type: 'bold' }),
@@ -38,16 +12,69 @@ const plugins = [
     MarkHotKey({ key: 'i', type: 'italic' }),
     MarkHotKey({ key: '~', type: 'strikethrough' }),
     MarkHotKey({ key: 'u', type: 'underline' }),
-  ]
+];
 
-  interface IProps {
+const BLOCK_TAGS = {
+    blockquote: 'quote',
+    p: 'paragraph',
+    pre: 'code',
+};
+
+const MARK_TAGS = {
+    em: 'italic',
+    strong: 'bold',
+    u: 'underline',
+};
+interface IProps {
     opsChanger: (o:any) => void;
 }
-class SlateEditor extends React.Component<IProps, any> {
+
+class EditorSlate extends React.Component<IProps, any>{
+    private doc;
+    private userId;
     state = {
-        //value: initValue,
-        value: initValue,
+        value: Value.create({}),
+    }
+    private _setDoc = () => {
+        this.doc = connection.get('examples', 'richtext');
+        console.log('Doc');
+        console.log(this.doc);
+        this.doc.subscribe( err => {
+            if (err) {
+                console.log('err' + err);
+                throw err;
+            }
+            this.setState({value: Value.create(this.doc.data)});
+            console.log('Successful subscription');
+            console.log(this.doc.data);
+            this.doc.on('op', (op, source) => {
+                console.log('incoming ops');
+                if (source === this.userId) return;
+                this.setState({
+                    value: Operation.create(op).apply(this.state.value),
+                });
+            });
+          });
+    }
+    componentWillMount = () => {
+        if (!this.doc) {
+            this._setDoc();
+        }
+        if (!this.userId) {
+            this.userId = uuid4();
+        }
     };
+    onChange = ({value, operations}) => {
+        const { opsChanger } = this.props;
+        opsChanger(operations);
+        operations.forEach(o => {
+            if (o.type !== 'set_selection') {
+                this.doc.submitOp(o.toJSON(), {source: this.userId});
+            }
+        });
+        this.setState({ value });
+    }
+
     render() {
         return (
             <Editor
@@ -59,39 +86,45 @@ class SlateEditor extends React.Component<IProps, any> {
             />
         );
     }
-    onChange = ({value, operations}) => {
-        const content = JSON.stringify(value.toJSON());
-        // console.log(content);
-        this.setState({value});
-        // const { opsChanger } = this.props;
-        // opsChanger(operations);
-        localStorage.setItem('content', content);
-    };
+
     renderNode = (props, editor, next) => {
         switch (props.node.type) {
             case 'code':
-                return (<CodeNode {...props} />);
+                return (
+                    <pre {...props.attributes}>
+                        <code>{props.children}</code>
+                    </pre>
+                );
+            case 'paragraph':
+                return (
+                    <p {...props.attributes} className={props.node.data.get('className')}>
+                        {props.children}
+                    </p>
+                );
+            case 'quote':
+                return (
+                    <blockquote {...props.attributes}>
+                        {props.children}
+                    </blockquote>
+                );
             default:
                 return next();
         }
     };
+
     renderMark = (props, editor, next) => {
-        switch (props.mark.type) {
+        const { mark, attributes } = props;
+        switch (mark.type) {
             case 'bold':
-                return (<strong>{props.children}</strong>);
-            case 'code':
-                return (<code>{props.children}</code>);
+                return <strong {...attributes}>{props.children}</strong>;
             case 'italic':
-                return (<em>{props.children}</em>);
-            case 'strikethrough':
-                return (<del>{props.children}</del>);
+                return <em {...attributes}>{props.children}</em>;
             case 'underline':
-                return (<u>{props.children}</u>);
+                return <u {...attributes}>{props.children}</u>;
             default:
                 return next();
         }
-    }
-
+    };
 }
 
-export default SlateEditor;
+export default EditorSlate;

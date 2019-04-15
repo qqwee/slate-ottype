@@ -148,16 +148,15 @@ const Transform = {
             return op1;
         }
     },
-
     /**
      * [insert_text, add_mark] transformation.
      * @param {Operation} op1 
      * @param {Operation} op2 
      * @param {String} side 
      */
-    transformInsTextAddMark: (op1, op2, side) => {
+    // transformInsTextAddMark: (op1, op2, side) => {
 
-    },
+    // },
 
 //     /**
 //      * [insert_text, remove_mark] transformation.
@@ -250,24 +249,55 @@ const Transform = {
 //      */
 //     static transformInsTextSetValue(op1, op2, side) {
 //     }
-// //  Remove_text as first operator.
-//     /**
-//      * [remove_text, insert_text] transformation.
-//      * @param {Operation} op1 
-//      * @param {Operation} op2 
-//      * @param {String} side 
-//      */
-//     static transformRemoveTextInsertText(op1, op2, side) {
-//     }
+//  Remove_text as first operator.
+    /**
+     * [remove_text, insert_text] transformation.
+     * @param {Operation} op1 
+     * @param {Operation} op2 
+     * @param {String} side 
+     */
+    transformRemoveTextInsertText: (op1, op2, side) => {
+        const pathCompare = PathUtils.compare(op1.get('path'), op2.get('path'));
+        let newOffset;
+        if (pathCompare === 0) {
+            if (op1.get('offset') < op2.get('offset') || (op1.get('offset') === op2.get('offset') && side === 'left')) {
+                return op1;
+            } else {
+                if (op1.get('offset') < op2.get('offset') && op1.get('offset') <= op2.get('offset')) {
+                    newOffset = op2.get('offset');
+                } else {
+                    newOffset = op1.get('offset') - op2.get('text').length;
+                }
+                return Operation.create({
+                    object: 'operation',
+                    type: 'insert_text',
+                    path: op1.get('path'),
+                    offset: newOffset,
+                    text: op1.get('text'),
+                    marks: op1.get('marks'),
+                    data: op1.get('data')
+                });
+            }
+        } else {
+            return op1;
+        }
+    },
 
-//     /**
-//      * [remove_text, remove_text] transformation.
-//      * @param {Operation} op1 
-//      * @param {Operation} op2 
-//      * @param {String} side 
-//      */
-//     static transformRemoveTextRemoveText(op1, op2, side) {
-//     }
+    // /**
+    //  * [remove_text, remove_text] transformation.
+    //  * @param {Operation} op1 
+    //  * @param {Operation} op2 
+    //  * @param {String} side 
+    //  */
+    // transformRemoveTextRemoveText: (op1, op2, side) => {
+    //     const pathCompare = PathUtils.compare(op1.get('path'), op2.get('path'));
+    //     let newOffset;
+    //     if (pathCompare === 0) {
+            
+    //     } else {
+    //         return op1;
+    //     }
+    // }
 
     //   insert_text: ['path', 'offset', 'text', 'marks', 'data'],
     //   remove_text: ['path', 'offset', 'text', 'marks', 'data'],
@@ -287,7 +317,7 @@ const Transform = {
     //   set_value: ['properties', 'newProperties', 'data'],
 }
 
-module.exports = {
+export {
     Transform,
     OperationTypes
 };

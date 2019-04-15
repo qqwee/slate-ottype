@@ -1,7 +1,7 @@
 /* eslint-disable */
 var { Value, Operation } = require('slate');
 var { PathUtils } = require('slate');
-var { Selector } = require('./Selector');
+import { Selector } from './Selector';
 var { isImmutable } = require('immutable');
 
 const slateType = {
@@ -66,4 +66,4 @@ const slateType = {
     }
 };
 
-module.exports = slateType;
+export default slateType;

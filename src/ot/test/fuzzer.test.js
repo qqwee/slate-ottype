@@ -1,6 +1,3 @@
-var { getAllTextLeafsWithPaths } = require('./fuzzer');
-var { Operation } = require('slate');
-
 const testDoc = {
     "object": "value",
     "document": {
@@ -33,10 +30,4 @@ const testDoc = {
     }
 };
 
-
-module.exports = {
-  testDoc
-};
-
-// console.log(getAllTextLeafsWithPaths(testDoc.document, []));
-
+export { testDoc };

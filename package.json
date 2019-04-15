@@ -11,6 +11,7 @@
     "@types/slate-html-serializer": "^0.6.3",
     "@types/slate-plain-serializer": "^0.6.1",
     "@types/slate-react": "^0.21.0",
+    "esm": "^3.2.22",
     "express": "^4.16.4",
     "http": "0.0.0",
     "immutable": "^4.0.0-rc.12",
@@ -32,10 +33,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "testot": "mocha --full-trace --inspect src/ot/test/fuzzer.js",
+    "testot": "mocha --full-trace --inspect ot/test/fuzzer.js",
     "eject": "react-scripts eject",
-    "ot": "ts-node src/ot-types/type.ts",
-    "server": "node -- backend/server.js"
+    "server": "node -r esm backend/server.js"
   },
   "eslintConfig": {
     "extends": "react-app"
