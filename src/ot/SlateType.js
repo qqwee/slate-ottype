@@ -30,6 +30,8 @@ const slateType = {
             if (op1.get('type') === 'insert_text' && op2.get('type') === 'insert_text') {
                 console.log('insert_text transform called');
                 return Selector.transform(op1, op2, side);
+            } else if (op1.get('type') === 'insert_text' && op2.get('type') === 'add_mark') {
+                return Selector.transform(op1, op2, side);
             }
             else if (side === 'left') {
                 return op1;
@@ -56,13 +58,13 @@ const slateType = {
          * TODO:
          *      compose operations to send them out together, at least compose for text
          *      which is the most common usage of text editor
-         * @param {Operation} op1 
-         * @param {Operation} op2 
+         * @param {Operation} op1
+         * @param {Operation} op2
          * compose: function (op1, op2) {
 
             }
          */
-        
+
     }
 };
 
