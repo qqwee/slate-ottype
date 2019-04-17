@@ -8,6 +8,7 @@ var Operation = slateType.Operation;
 
 const AVAILIBLE_OPS = ['insert_text', 'add_mark'];
 const AVAILIBLE_OPS_LEN = AVAILIBLE_OPS.length;
+const MARKS = ['mark1', 'mark2', 'mark3', 'mark4', 'mark5'];
 
 /**
  * Overload slateType create function for easier random op generation
@@ -99,7 +100,7 @@ const generateRandomAddMarkOp = (snapshot) => {
       path: randomPath.slice(0, randomPath.length - 1),
       offset,
       length: fuzzer.randomInt(randomLeaf.text.length - offset),
-      mark: 'random_mark',
+      mark: MARKS[fuzzer.randomInt(MARKS.length)],
       data: {},
   });
   return op;
