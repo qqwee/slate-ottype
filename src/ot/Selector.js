@@ -30,8 +30,6 @@ const Selector = {
      * @param {string} side 
      */
     transform: (op1, op2, side) => {
-        console.log('operation' + op1);
-        console.log('operation type' + op1.type);
         if (op1.type === OperationTypes.INSERT_TEXT) {
             switch (op2.type) {
                 case (OperationTypes.INSERT_TEXT):
@@ -61,9 +59,9 @@ const Selector = {
                 case (OperationTypes.SET_VALUE):
                     return Transform.transformInsTextSetValue(op1, op2, side);
                 default:
-                    throw new Error(`Unrecognized operation type ${op2.type}`);
+                    throw new Error('Unrecognized operation type', op1.type, op2.type);
             }
-        } /*else if (op1.type === OperationTypes.REMOVE_TEXT) {
+        } else if (op1.type === OperationTypes.REMOVE_TEXT) {
             switch (op2.type) {
                 case (OperationTypes.INSERT_TEXT):
                 case (OperationTypes.REMOVE_TEXT):
@@ -78,12 +76,16 @@ const Selector = {
                 case (OperationTypes.SPLIT_NODE):
                 case (OperationTypes.SET_SELECTION):
                 case (OperationTypes.SET_VALUE):
+                default:
+                    throw new Error('Unsupported operation type passed: ', op1.type, op2.type);
             }
         } else if (op1.type === OperationTypes.ADD_MARK) {
             switch (op2.type) {
                 case (OperationTypes.INSERT_TEXT):
-                case (OperationTypes.REMOVE_TEXT):
+                    return Transform.transformAddMarkInsText(op1, op2, side);
                 case (OperationTypes.ADD_MARK):
+                    return Transform.transformAddMarkAddMark(op1, op2, side);
+                case (OperationTypes.REMOVE_TEXT):
                 case (OperationTypes.SET_MARK):
                 case (OperationTypes.REMOVE_MARK):
                 case (OperationTypes.INSERT_NODE):
@@ -94,6 +96,8 @@ const Selector = {
                 case (OperationTypes.SPLIT_NODE):
                 case (OperationTypes.SET_SELECTION):
                 case (OperationTypes.SET_VALUE):
+                default:
+                    throw new Error('Unsupported operation type passed: ', op1.type, op2.type);
             }
         } else if (op1.type === OperationTypes.REMOVE_MARK) {
             switch (op2.type) {
@@ -110,6 +114,8 @@ const Selector = {
                 case (OperationTypes.SPLIT_NODE):
                 case (OperationTypes.SET_SELECTION):
                 case (OperationTypes.SET_VALUE):
+                default:
+                    throw new Error('Unsupported operation type passed: ', op1.type, op2.type);
             }
         } else if (op1.type === OperationTypes.SET_MARK) {
             switch (op2.type) {
@@ -126,6 +132,8 @@ const Selector = {
                 case (OperationTypes.SPLIT_NODE):
                 case (OperationTypes.SET_SELECTION):
                 case (OperationTypes.SET_VALUE):
+                default:
+                    throw new Error('Unsupported operation type passed: ', op1.type, op2.type);
             }
         } else if (op1.type === OperationTypes.INSERT_NODE) {
             switch (op2.type) {
@@ -142,6 +150,8 @@ const Selector = {
                 case (OperationTypes.SPLIT_NODE):
                 case (OperationTypes.SET_SELECTION):
                 case (OperationTypes.SET_VALUE):
+                default:
+                    throw new Error('Unsupported operation type passed: ', op1.type, op2.type);
             }
         } else if (op1.type === OperationTypes.MERGE_NODE) {
             switch (op2.type) {
@@ -158,6 +168,8 @@ const Selector = {
                 case (OperationTypes.SPLIT_NODE):
                 case (OperationTypes.SET_SELECTION):
                 case (OperationTypes.SET_VALUE):
+                default:
+                    throw new Error('Unsupported operation type passed: ', op1.type, op2.type);
             }
         } else if (op1.type === OperationTypes.MOVE_NODE) {
             switch (op2.type) {
@@ -174,6 +186,8 @@ const Selector = {
                 case (OperationTypes.SPLIT_NODE):
                 case (OperationTypes.SET_SELECTION):
                 case (OperationTypes.SET_VALUE):
+                default:
+                    throw new Error('Unsupported operation type passed: ', op1.type, op2.type);
             }
         } else if (op1.type === OperationTypes.REMOVE_NODE) {
             switch (op2.type) {
@@ -190,6 +204,8 @@ const Selector = {
                 case (OperationTypes.SPLIT_NODE):
                 case (OperationTypes.SET_SELECTION):
                 case (OperationTypes.SET_VALUE):
+                default:
+                    throw new Error('Unsupported operation type passed: ', op1.type, op2.type);
             }
         } else if (op1.type === OperationTypes.SET_NODE) {
             switch (op2.type) {
@@ -206,6 +222,8 @@ const Selector = {
                 case (OperationTypes.SPLIT_NODE):
                 case (OperationTypes.SET_SELECTION):
                 case (OperationTypes.SET_VALUE):
+                default:
+                    throw new Error('Unsupported operation type passed: ', op1.type, op2.type);
             }
         } else if (op1.type === OperationTypes.SPLIT_NODE) {
             switch (op2.type) {
@@ -222,6 +240,8 @@ const Selector = {
                 case (OperationTypes.SPLIT_NODE):
                 case (OperationTypes.SET_SELECTION):
                 case (OperationTypes.SET_VALUE):
+                default:
+                    throw new Error('Unsupported operation type passed: ', op1.type, op2.type);
             }
         } else if (op1.type === OperationTypes.SET_SELECTION) {
             switch (op2.type) {
@@ -238,6 +258,8 @@ const Selector = {
                 case (OperationTypes.SPLIT_NODE):
                 case (OperationTypes.SET_SELECTION):
                 case (OperationTypes.SET_VALUE):
+                default:
+                    throw new Error('Unsupported operation type passed: ', op1.type, op2.type);
             }
         } else if (op1.type === OperationTypes.SET_VALUE) {
             switch (op2.type) {
@@ -254,8 +276,10 @@ const Selector = {
                 case (OperationTypes.SPLIT_NODE):
                 case (OperationTypes.SET_SELECTION):
                 case (OperationTypes.SET_VALUE):
+                default:
+                    throw new Error('Unsupported operation type passed: ', op1.type, op2.type);
             }
-        } */else {
+        } else {
             throw new Error('Unsupported operation type passed: ' + op1.type);
         }
     }

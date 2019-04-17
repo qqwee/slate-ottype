@@ -1,4 +1,4 @@
-var { Operation, PathUtils } = require('slate');
+var { Operation, PathUtils, Mark } = require('slate');
 /**
 PathUtils exports ...
 export default {
@@ -150,13 +150,92 @@ const Transform = {
     },
     /**
      * [insert_text, add_mark] transformation.
-     * @param {Operation} op1 
-     * @param {Operation} op2 
-     * @param {String} side 
+     * @param {Operation} op1
+     * @param {Operation} op2
+     * @param {String} side
      */
-    // transformInsTextAddMark: (op1, op2, side) => {
+    transformInsTextAddMark: (op1, op2, side) => {
+        const pathCompare = PathUtils.compare(op1.get('path'), op2.get('path'));
+        if (pathCompare === 0) {
+            // insert text happens completely before mark
+            if (op1.get('offset') <= op2.get('offset')) {
+                return op1;
+            } 
+            // insert text happens completely after mark
+            else if (op1.get('offset') >= op2.get('offset') + op2.get('length')) {
+                return op1;
+            }
+            // insert text happens overlapping mark
+            else {
+                const mark = op2.get('mark');
+                let newMarks = op1.get('marks');
+                newMarks = newMarks.add(Mark.create({ type: mark.type, data: {}}));
+                return Operation.create({
+                    object: 'operation',
+                    type: 'insert_text',
+                    path: op1.get('path'),
+                    offset: op1.get('offset'),
+                    text: op1.get('text'),
+                    marks: newMarks,
+                    data: op1.get('data')
+                });
+            }
+        }
+        
+        return op1;
+    },
 
-    // },
+    /**
+     * [add_mark, insert_text] transformation.
+     * @param {Operation} op1
+     * @param {Operation} op2
+     * @param {String} side
+     */
+    transformAddMarkInsText: (op1, op2, side) => {
+        const pathCompare = PathUtils.compare(op1.get('path'), op2.get('path'));
+        if (pathCompare === 0) {
+            // add mark happens completely before insert
+            if (op1.get('offset') + op1.get('length') <= op2.get('offset')) {
+                return op1;
+            }
+            // add mark happens overlapping insert text
+            else if (op1.get('offset') < op2.get('offset')) {
+                return Operation.create({
+                    object: 'operation',
+                    type: 'add_mark',
+                    path: op1.get('path'),
+                    offset: op1.get('offset'),
+                    length: op1.get('length') + op2.get('text').length,
+                    mark: op1.get('mark'),
+                    data: op1.get('data')
+                }); 
+            }
+            // add mark happens completely after insert
+            else {
+                return Operation.create({
+                    object: 'operation',
+                    type: 'add_mark',
+                    path: op1.get('path'),
+                    offset: op1.get('offset') + op2.get('text').length,
+                    length: op1.get('length'),
+                    mark: op1.get('mark'),
+                    data: op1.get('data')
+                });
+            }
+        }
+        
+        return op1;
+    },
+
+     /**
+     * [add_mark, add_mark] transformation.
+     * @param {Operation} op1
+     * @param {Operation} op2
+     * @param {String} side
+     */
+    transformAddMarkAddMark: (op1, op2, side) => {
+        return op1;
+    },
 
 //     /**
 //      * [insert_text, remove_mark] transformation.
