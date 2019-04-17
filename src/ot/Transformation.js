@@ -157,7 +157,16 @@ const Transform = {
     transformInsTextAddMark: (op1, op2, side) => {
         const pathCompare = PathUtils.compare(op1.get('path'), op2.get('path'));
         if (pathCompare === 0) {
-            if (op1.get('offset') > op2.get('offset') && op1.get('offset') < op2.get('offset') + op2.get('length')) {
+            // insert text happens completely before mark
+            if (op1.get('offset') <= op2.get('offset')) {
+                return op1;
+            } 
+            // insert text happens completely after mark
+            else if (op1.get('offset') >= op2.get('offset') + op2.get('length')) {
+                return op1;
+            }
+            // insert text happens overlapping mark
+            else {
                 const mark = op2.get('mark');
                 let newMarks = op1.get('marks');
                 newMarks = newMarks.add({ type: mark.type, data: {} });
@@ -173,6 +182,58 @@ const Transform = {
             }
         }
         
+        return op1;
+    },
+
+    /**
+     * [add_mark, insert_text] transformation.
+     * @param {Operation} op1
+     * @param {Operation} op2
+     * @param {String} side
+     */
+    transformAddMarkInsText: (op1, op2, side) => {
+        const pathCompare = PathUtils.compare(op1.get('path'), op2.get('path'));
+        if (pathCompare === 0) {
+            // add mark happens completely before insert
+            if (op1.get('offset') + op1.get('length') <= op2.get('offset')) {
+                return op1;
+            }
+            // add mark happens overlapping insert text
+            else if (op1.get('offset') < op2.get('offset')) {
+                return Operation.create({
+                    object: 'operation',
+                    type: 'add_mark',
+                    path: op1.get('path'),
+                    offset: op1.get('offset'),
+                    length: op1.get('length') + op2.get('text').length,
+                    mark: op1.get('mark'),
+                    data: op1.get('data')
+                }); 
+            }
+            // add mark happens completely after insert
+            else {
+                return Operation.create({
+                    object: 'operation',
+                    type: 'add_mark',
+                    path: op1.get('path'),
+                    offset: op1.get('offset') + op2.get('text').length,
+                    length: op1.get('length'),
+                    mark: op1.get('mark'),
+                    data: op1.get('data')
+                });
+            }
+        }
+        
+        return op1;
+    },
+
+     /**
+     * [add_mark, add_mark] transformation.
+     * @param {Operation} op1
+     * @param {Operation} op2
+     * @param {String} side
+     */
+    transformAddMarkAddMark: (op1, op2, side) => {
         return op1;
     },
 

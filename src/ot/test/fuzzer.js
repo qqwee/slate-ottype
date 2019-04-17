@@ -15,7 +15,6 @@ const AVAILIBLE_OPS_LEN = AVAILIBLE_OPS.length;
 slateType.type.create = function (init) {
         console.log('called create in SlateType');
         init = testDoc;
-        // console.log(JSON.parse(JSON.stringify(Value.create(init).toJSON())));
         return Value.create(init);
 }
 /**
@@ -48,8 +47,6 @@ const getAllTextLeafsWithPaths = (tree, path = []) => {
  */
 
 var generateRandomOp = function(snapshot) {
-    console.log('Generating random operation');
-    // console.log(snapshot);
     const value = Value.create(snapshot);
     let op = {};
     switch(fuzzer.randomInt(AVAILIBLE_OPS_LEN)) {
@@ -68,7 +65,6 @@ var generateRandomOp = function(snapshot) {
 
 //get a random path in a snapshot
 const getRandomLeafWithPath = (snapshot) => {
-    console.log('getting random leaf with path');
     const leaves = getAllTextLeafsWithPaths(snapshot);
     const result = leaves[fuzzer.randomInt(leaves.length)];
     return result;
@@ -76,8 +72,6 @@ const getRandomLeafWithPath = (snapshot) => {
 
 //insert_text: ['path', 'offset', 'text', 'marks', 'data'],
 const generateRandomInsertTextOp = (snapshot) => {
-
-    console.log('generate random insert text operation');
     const randomLeaf = getRandomLeafWithPath(snapshot.toJSON().document);
     const randomPath = randomLeaf.path;
     
@@ -95,7 +89,6 @@ const generateRandomInsertTextOp = (snapshot) => {
 
 // add_mark: ['path', 'offset', 'length', 'mark', 'data'],
 const generateRandomAddMarkOp = (snapshot) => {
-  console.log('generate random add mark operation');
   const randomLeaf = getRandomLeafWithPath(snapshot.toJSON().document);
   const randomPath = randomLeaf.path;
 

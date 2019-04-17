@@ -17,41 +17,24 @@ const slateType = {
             return Value.create(init);
         },
         apply: function (snapshot, op) {
-            console.log('Apply op to snapshot');
             let value = Value.create(snapshot);
             const operation = Operation.create(op);
             value = operation.apply(value);
             return value;
         },
         transform: function (op1, op2, side) {
-            console.log('transform called');
             op1 = Operation.create(op1);
             op2 = Operation.create(op2);
-            if (op1.get('type') === 'insert_text' && op2.get('type') === 'insert_text') {
-                console.log('insert_text transform called');
-                return Selector.transform(op1, op2, side);
-            } else if (op1.get('type') === 'insert_text' && op2.get('type') === 'add_mark') {
-                return Selector.transform(op1, op2, side);
-            }
-            else if (side === 'left') {
-                return op1;
-            } else {
-                return op2;
-            }
+            return Selector.transform(op1, op2, side);
         },
         serialize: function (snapshot) {
-            console.log('serialize called: ');
             if (isImmutable(snapshot)) {
-                console.log(JSON.stringify(snapshot.toJSON()));
                 return snapshot.toJSON();
             } else {
-                console.log(JSON.stringify(snapshot));
                 return snapshot;
             }
         },
         deserialize: function (data) {
-            console.log('deserialize called: ');
-            console.log(JSON.stringify(data));
             return Value.fromJSON(data);
         },
         /**
