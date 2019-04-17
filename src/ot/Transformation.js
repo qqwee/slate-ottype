@@ -1,4 +1,4 @@
-var { Operation, PathUtils } = require('slate');
+var { Operation, PathUtils, Mark } = require('slate');
 /**
 PathUtils exports ...
 export default {
@@ -169,7 +169,7 @@ const Transform = {
             else {
                 const mark = op2.get('mark');
                 let newMarks = op1.get('marks');
-                newMarks = newMarks.add({ type: mark.type, data: {} });
+                newMarks = newMarks.add(Mark.create({ type: mark.type, data: {}}));
                 return Operation.create({
                     object: 'operation',
                     type: 'insert_text',
