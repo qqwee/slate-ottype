@@ -13,11 +13,11 @@ const MARKS = ['mark1', 'mark2', 'mark3', 'mark4', 'mark5'];
 /**
  * Overload slateType create function for easier random op generation
  */
-slateType.type.create = function (init) {
-        console.log('called create in SlateType');
-        init = testDoc;
-        return Value.create(init);
-}
+slateType.type.create = function(init) {
+    console.log('called create in SlateType');
+    init = testDoc;
+    return Value.create(init);
+};
 /**
  * Start from document
  * @param {Value} snapshot
@@ -33,11 +33,13 @@ const getAllTextLeafsWithPaths = (tree, path = []) => {
                         l.path = [...path, index, idx];
                         array.push(l);
                     }
-                })
+                });
             } else {
-                array = array.concat(getAllTextLeafsWithPaths(n, [...path, index]));
-              }
-            })
+                array = array.concat(
+                    getAllTextLeafsWithPaths(n, [...path, index])
+                );
+            }
+        });
     }
     return array;
 };
@@ -50,32 +52,32 @@ const getAllTextLeafsWithPaths = (tree, path = []) => {
 var generateRandomOp = function(snapshot) {
     const value = Value.create(snapshot);
     let op = {};
-    switch(fuzzer.randomInt(AVAILIBLE_OPS_LEN)) {
-      case (0):
-        op = generateRandomInsertTextOp(snapshot);
-        break
-      case (1):
-        op = generateRandomAddMarkOp(snapshot);
-        break;
-      default:
-        throw Error('Error generating random op');
+    switch (fuzzer.randomInt(AVAILIBLE_OPS_LEN)) {
+        case 0:
+            op = generateRandomInsertTextOp(snapshot);
+            break;
+        case 1:
+            op = generateRandomAddMarkOp(snapshot);
+            break;
+        default:
+            throw Error('Error generating random op');
     }
     const newSnapshot = op.apply(value);
     return [op, newSnapshot];
 };
 
 //get a random path in a snapshot
-const getRandomLeafWithPath = (snapshot) => {
+const getRandomLeafWithPath = snapshot => {
     const leaves = getAllTextLeafsWithPaths(snapshot);
     const result = leaves[fuzzer.randomInt(leaves.length)];
     return result;
-}
+};
 
 //insert_text: ['path', 'offset', 'text', 'marks', 'data'],
-const generateRandomInsertTextOp = (snapshot) => {
+const generateRandomInsertTextOp = snapshot => {
     const randomLeaf = getRandomLeafWithPath(snapshot.toJSON().document);
     const randomPath = randomLeaf.path;
-    
+
     const op = Operation.create({
         object: 'operation',
         type: 'insert_text',
@@ -83,28 +85,28 @@ const generateRandomInsertTextOp = (snapshot) => {
         offset: fuzzer.randomInt(randomLeaf.text.length),
         text: fuzzer.randomWord(),
         marks: [...randomLeaf.marks],
-        data: {},
+        data: {}
     });
     return op;
-}
+};
 
 // add_mark: ['path', 'offset', 'length', 'mark', 'data'],
-const generateRandomAddMarkOp = (snapshot) => {
-  const randomLeaf = getRandomLeafWithPath(snapshot.toJSON().document);
-  const randomPath = randomLeaf.path;
+const generateRandomAddMarkOp = snapshot => {
+    const randomLeaf = getRandomLeafWithPath(snapshot.toJSON().document);
+    const randomPath = randomLeaf.path;
 
-  const offset = fuzzer.randomInt(randomLeaf.text.length);
-  const op = Operation.create({
-      object: 'operation',
-      type: 'add_mark',
-      path: randomPath.slice(0, randomPath.length - 1),
-      offset,
-      length: fuzzer.randomInt(randomLeaf.text.length - offset),
-      mark: MARKS[fuzzer.randomInt(MARKS.length)],
-      data: {},
-  });
-  return op;
-}
+    const offset = fuzzer.randomInt(randomLeaf.text.length);
+    const op = Operation.create({
+        object: 'operation',
+        type: 'add_mark',
+        path: randomPath.slice(0, randomPath.length - 1),
+        offset,
+        length: fuzzer.randomInt(randomLeaf.text.length - offset),
+        mark: MARKS[fuzzer.randomInt(MARKS.length)],
+        data: {}
+    });
+    return op;
+};
 
 fuzzer(slateType.type, generateRandomOp, 100);
 

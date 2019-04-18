@@ -1,7 +1,9 @@
 /* eslint-disable */
+import { Selector } from './Selector';
+import { normalizeSnapShot } from './Utilitites';
+
 var { Value, Operation } = require('slate');
 var { PathUtils } = require('slate');
-import { Selector } from './Selector';
 var { isImmutable } = require('immutable');
 
 const slateType = {
@@ -10,33 +12,36 @@ const slateType = {
     type: {
         name: 'slate-ot-type',
         uri: 'http://sharejs.org/types/slate-ot-type',
-        create: function (init) {
+        create: function(init) {
             console.log(init);
             console.log('called create in SlateType');
-            console.log(JSON.parse(JSON.stringify(Value.create(init).toJSON())));
+            console.log(
+                JSON.parse(JSON.stringify(Value.create(init).toJSON()))
+            );
             return Value.create(init);
         },
-        apply: function (snapshot, op) {
+        apply: function(snapshot, op) {
             let value = Value.create(snapshot);
             const operation = Operation.create(op);
             value = operation.apply(value);
+            value = Value.create(normalizeSnapShot(value));
             return value;
         },
-        transform: function (op1, op2, side) {
+        transform: function(op1, op2, side) {
             op1 = Operation.create(op1);
             op2 = Operation.create(op2);
             return Selector.transform(op1, op2, side);
         },
-        serialize: function (snapshot) {
+        serialize: function(snapshot) {
             if (isImmutable(snapshot)) {
                 return snapshot.toJSON();
             } else {
                 return snapshot;
             }
         },
-        deserialize: function (data) {
+        deserialize: function(data) {
             return Value.fromJSON(data);
-        },
+        }
         /**
          * TODO:
          *      compose operations to send them out together, at least compose for text
@@ -47,7 +52,6 @@ const slateType = {
 
             }
          */
-
     }
 };
 
