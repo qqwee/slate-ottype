@@ -234,7 +234,6 @@ const Transform = {
      * @param {String} side
      */
     transformRemoveMarkInsText: (op1, op2, side) => {
-        console.log('transformRemoveMarkInsText');
         const pathCompare = PathUtils.compare(op1.get('path'), op2.get('path'));
         if (pathCompare === 0) {
             // remove mark happens completely before insert
@@ -277,7 +276,6 @@ const Transform = {
      * @param {String} side
      */
     transformInsTextRemoveMark: (op1, op2, side) => {
-        console.log('transformInsTextRemoveMark');
         const pathCompare = PathUtils.compare(op1.get('path'), op2.get('path'));
         if (pathCompare === 0) {
             // insert text happens completely before remove mark
@@ -316,7 +314,6 @@ const Transform = {
      * @param {String} side
      */
     transformAddMarkAddMark: (op1, op2, side) => {
-        console.log('transformAddMarkAddMark');
         return op1;
     },
 
@@ -327,7 +324,6 @@ const Transform = {
      * @param {String} side
      */
     transformRemoveMarkRemoveMark: (op1, op2, side) => {
-        console.log('transformRemoveMarkRemoveMark');
         return op1;
     },
 
@@ -338,7 +334,6 @@ const Transform = {
      * @param {String} side
      */
     transformAddMarkRemoveMark: (op1, op2, side) => {
-        console.log('transformAddMarkRemoveMark');
         return op1;
     },
 
@@ -349,7 +344,6 @@ const Transform = {
      * @param {String} side
      */
     transformRemoveMarkAddMark: (op1, op2, side) => {
-        console.log('transformRemoveMarkAddMark');
         return op1;
     },
 
