@@ -16,9 +16,7 @@ const sortMarksOnEachLeaf = tree => {
             if (n.object === 'text') {
                 n.leaves.forEach(l => {
                     if (l.object === 'leaf') {
-                        l.marks = l.marks.sort((a, b) =>
-                            a.type > b.type ? 1 : -1
-                        );
+                        l.marks = l.marks.sort((a, b) => a.type.localeCompare(b.type));
                     }
                 });
             } else {

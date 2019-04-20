@@ -15,7 +15,7 @@ const testDoc = {
                             {
                                 object: 'leaf',
                                 text: 'A line of text in a paragraph.',
-                                marks: [{ type: 'c' }, { type: 'a' }]
+                                marks: [{ type: 'a' }, { type: 'c' }]
                             },
                             {
                                 object: 'leaf',

@@ -34,9 +34,9 @@ const slateType = {
         },
         serialize: function(snapshot) {
             if (isImmutable(snapshot)) {
-                return snapshot.toJSON();
+                return normalizeSnapShot(snapshot.toJSON());
             } else {
-                return snapshot;
+                return normalizeSnapShot(snapshot);
             }
         },
         deserialize: function(data) {
