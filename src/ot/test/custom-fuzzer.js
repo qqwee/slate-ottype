@@ -1,5 +1,5 @@
 const assert = require('assert');
-import fuzzer from 'ot-fuzzer';
+const fuzzer = require('ot-fuzzer');
 
 export default class CustomFuzzer {
     constructor({ otType, iterations = 100, generateRandomOp } = {}) {
@@ -14,7 +14,10 @@ export default class CustomFuzzer {
         this.checkEqual = this.checkEqual.bind(this);
     }
 
-    start(msg) {
+    /**
+     * Start a new series of iterations
+     */
+    start() {
         let val1 = this.initialValue;
         let val2 = this.initialValue;
 
@@ -44,6 +47,9 @@ export default class CustomFuzzer {
         return val1;
     }
 
+    /**
+     * Check that a single transform works 
+     */
     singleTransformCheck({ value = this.initialValue, op1, op2, side }) {
         const apply = this.otType.apply;
         let otherSide = side === 'left' ? 'right' : 'left';
@@ -56,12 +62,15 @@ export default class CustomFuzzer {
         return this.checkEqual(val1, val2);
     }
 
+    /**
+     * Check that two values are equal
+     */
     checkEqual(val1, val2) {
         try {
             if (this.otType.serialize) {
                 assert.deepStrictEqual(
-                    this.otType.serialize(val1.document), 
-                    this.otType.serialize(val2.document)
+                    this.otType.serialize(val1), 
+                    this.otType.serialize(val2)
                 );
             } else {
                 assert.deepStrictEqual(val1, val2);
