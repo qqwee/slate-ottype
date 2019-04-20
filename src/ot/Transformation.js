@@ -182,8 +182,10 @@ const Transform = {
             // otherwise handle complicated overlap
             // calculate left and right text
             // and shift operation by the difference in starting pionts
-            const leftText = op1.get('text').slice(0, Math.max(op2StartPoint - op1StartPoint, 0));
-            const rightText = op1.get('text').slice(Math.min(op1Len, op1Len - (op1EndPoint - op2EndPoint)), op1Len)
+            const leftTextEnd = Math.max(op2StartPoint - op1StartPoint, 0);
+            const leftText = op1.get('text').slice(0, leftTextEnd);
+            const rightTextStart = Math.min(op1Len, op1Len - (op1EndPoint - op2EndPoint));
+            const rightText = op1.get('text').slice(rightTextStart, op1Len);
 
             return Operation.create({
                 object: 'operation',
