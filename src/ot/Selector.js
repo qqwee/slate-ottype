@@ -102,6 +102,7 @@ const Selector = {
         } else if (op1.type === OperationTypes.REMOVE_MARK) {
             switch (op2.type) {
                 case (OperationTypes.INSERT_TEXT):
+                    return Transform.transformRemoveMarkInsText(op1, op2, side);
                 case (OperationTypes.REMOVE_TEXT):
                 case (OperationTypes.ADD_MARK):
                 case (OperationTypes.SET_MARK):

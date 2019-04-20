@@ -19,9 +19,9 @@ slateType.type.create = function(init) {
 
 let counter = 0;
 // remove mark tests
-const removeFuzzer = new CustomFuzzer({
+const removeMarkFuzzer = new CustomFuzzer({
   otType: slateType.type,
-  iterations: 1000,
+  iterations: 100,
   generateRandomOp: (snapshot) => {
     counter++;
     if (counter < 3) {
@@ -32,4 +32,4 @@ const removeFuzzer = new CustomFuzzer({
     }
   },
 })
-removeFuzzer.start();
+removeMarkFuzzer.start();
