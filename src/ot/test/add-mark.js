@@ -47,27 +47,5 @@ assert(addMarkFuzzer.singleTransformCheck({ op1, op2, side: 'left' }), 'add_mark
 assert(addMarkFuzzer.singleTransformCheck({ op1, op2, side: 'right' }), 'add_mark, add_mark right');
 console.log('========= PASSED =========');
 
-let counter = 0;
-// remove text tests
-const removeFuzzer = new CustomFuzzer({
-  otType: slateType.type,
-  iterations: 100000,
-  generateRandomOp: (snapshot) => {
-    counter++;
-    if (counter < 3) {
-      return generateRandomRemoveText(snapshot);
-    } else {
-      if (counter === 4) counter = 0;
-      return generateRandomInsertTextOp(snapshot);
-    }
-  },
-})
-removeFuzzer.start();
-
-const basicFuzzer = new CustomFuzzer({
-  otType: slateType.type,
-  iterations: 100,
-  generateRandomOp,
-});
-
-basicFuzzer.start();
+// run remaining add mark tests
+addMarkFuzzer.start();
