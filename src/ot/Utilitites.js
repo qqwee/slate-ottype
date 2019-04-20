@@ -11,7 +11,7 @@ export const normalizeSnapShot = snapShot => {
 };
 
 const sortMarksOnEachLeaf = tree => {
-    if (tree.nodes) {
+    if (tree && tree.nodes) {
         tree.nodes.forEach(n => {
             if (n.object === 'text') {
                 n.leaves.forEach(l => {

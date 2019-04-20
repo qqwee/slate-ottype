@@ -101,6 +101,27 @@ export const generateRandomInsertTextOp = snapshot => {
     return op;
 };
 
+// remove_text: ['path', 'offset', 'text', 'marks', 'data'],
+export const generateRandomRemoveText = snapshot => {
+    const randomLeaf = getRandomLeafWithPath(snapshot.toJSON().document);
+    const randomPath = randomLeaf.path;
+
+    const offset = fuzzer.randomInt(randomLeaf.text.length);
+    const textLength = fuzzer.randomInt(randomLeaf.text.length - offset);
+    const text = randomLeaf.text.slice(offset, textLength);
+
+    const op = Operation.create({
+        object: 'operation',
+        type: 'remove_text',
+        path: randomPath.slice(0, randomPath.length - 1),
+        offset,
+        text,
+        marks: [...randomLeaf.marks],
+        data: {}
+    });
+    return op;
+};
+
 // add_mark: ['path', 'offset', 'length', 'mark', 'data'],
 export const generateRandomAddMarkOp = snapshot => {
     const randomLeaf = getRandomLeafWithPath(snapshot.toJSON().document);
