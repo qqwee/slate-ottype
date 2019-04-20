@@ -106,6 +106,7 @@ const Selector = {
                 case (OperationTypes.ADD_MARK):
                 case (OperationTypes.SET_MARK):
                 case (OperationTypes.REMOVE_MARK):
+                    return Transform.transformRemoveMarkRemoveMark(op1, op2, side);
                 case (OperationTypes.INSERT_NODE):
                 case (OperationTypes.MERGE_NODE):
                 case (OperationTypes.MOVE_NODE):

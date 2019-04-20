@@ -118,3 +118,21 @@ export const generateRandomAddMarkOp = snapshot => {
     });
     return op;
 };
+
+// remove_mark: ['path', 'offset', 'length', 'mark', 'data'],
+export const generateRandomRemoveMarkOp = snapshot => {
+    const randomLeaf = getRandomLeafWithPath(snapshot.toJSON().document);
+    const randomPath = randomLeaf.path;
+
+    const offset = fuzzer.randomInt(randomLeaf.text.length);
+    const op = Operation.create({
+        object: 'operation',
+        type: 'remove_mark',
+        path: randomPath.slice(0, randomPath.length - 1),
+        offset,
+        length: fuzzer.randomInt(randomLeaf.text.length - offset),
+        mark: MARKS[fuzzer.randomInt(MARKS.length)],
+        data: {}
+    });
+    return op;
+}

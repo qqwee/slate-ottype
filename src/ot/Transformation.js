@@ -245,6 +245,15 @@ const Transform = {
         return op1;
     },
 
+    /**
+     * [add_mark, add_mark] transformation.
+     * @param {Operation} op1
+     * @param {Operation} op2
+     * @param {String} side
+     */
+    transformRemoveMarkRemoveMark: (op1, op2, side) => {
+        return op1;
+    },
 //     /**
 //      * [insert_text, remove_mark] transformation.
 //      * @param {Operation} op1 
