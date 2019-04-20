@@ -46,9 +46,11 @@ const removeMarkInsertTextFuzzer = new CustomFuzzer({
   generateRandomOp: (snapshot) => {
     counter++;
     if (counter < 3) {
+      return generateRandomInsertTextOp(snapshot);
+    } else if (counter < 5) {
       return generateRandomAddMarkOp(snapshot);
     } else {
-      if (counter === 4) counter = 0;
+      if (counter === 7) counter = 0;
       return generateRandomRemoveMarkOp(snapshot);
     }
   },
