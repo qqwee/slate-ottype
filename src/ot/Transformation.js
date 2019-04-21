@@ -297,6 +297,86 @@ const Transform = {
         return op1;
     },
 
+    /**
+     * [remove_mark, insert_text] transformation.
+     * @param {Operation} op1
+     * @param {Operation} op2
+     * @param {String} side
+     */
+    transformRemoveMarkInsText: (op1, op2, side) => {
+        const pathCompare = PathUtils.compare(op1.get('path'), op2.get('path'));
+        if (pathCompare === 0) {
+            // remove mark happens completely before insert
+            if (op1.get('offset') + op1.get('length') <= op2.get('offset')) {
+                return op1;
+            }
+            // remove mark happens overlapping insert text
+            else if (op1.get('offset') < op2.get('offset')) {
+                return Operation.create({
+                    object: 'operation',
+                    type: 'remove_mark',
+                    path: op1.get('path'),
+                    offset: op1.get('offset'),
+                    length: op1.get('length') + op2.get('text').length,
+                    mark: op1.get('mark'),
+                    data: op1.get('data')
+                }); 
+            }
+            // remove mark happens completely after insert
+            else {
+                return Operation.create({
+                    object: 'operation',
+                    type: 'remove_mark',
+                    path: op1.get('path'),
+                    offset: op1.get('offset') + op2.get('text').length,
+                    length: op1.get('length'),
+                    mark: op1.get('mark'),
+                    data: op1.get('data')
+                });
+            }
+        }
+        
+        return op1;
+    },
+
+    /**
+     * [insert_text, remove_mark] transformation.
+     * @param {Operation} op1
+     * @param {Operation} op2
+     * @param {String} side
+     */
+    transformInsTextRemoveMark: (op1, op2, side) => {
+        const pathCompare = PathUtils.compare(op1.get('path'), op2.get('path'));
+        if (pathCompare === 0) {
+            // insert text happens completely before remove mark
+            if (op1.get('offset') <= op2.get('offset')) {
+                return op1;
+            } 
+            // insert text happens completely after remove mark
+            else if (op1.get('offset') >= op2.get('offset') + op2.get('length')) {
+                return op1;
+            }
+            // insert text happens overlapping remove mark
+            else {
+                const mark = op2.get('mark');
+                let newMarks = op1.get('marks').filterNot(e => (
+                    e.get('type') === mark.get('type') 
+                ));
+                return Operation.create({
+                    object: 'operation',
+                    type: 'insert_text',
+                    path: op1.get('path'),
+                    offset: op1.get('offset'),
+                    text: op1.get('text'),
+                    marks: newMarks,
+                    data: op1.get('data')
+                });
+            }
+        }
+        
+        return op1;
+    },
+
      /**
      * [add_mark, add_mark] transformation.
      * @param {Operation} op1
@@ -304,6 +384,36 @@ const Transform = {
      * @param {String} side
      */
     transformAddMarkAddMark: (op1, op2, side) => {
+        return op1;
+    },
+
+    /**
+     * [add_mark, add_mark] transformation.
+     * @param {Operation} op1
+     * @param {Operation} op2
+     * @param {String} side
+     */
+    transformRemoveMarkRemoveMark: (op1, op2, side) => {
+        return op1;
+    },
+
+    /**
+     * [add_mark, remove_mark] transformation.
+     * @param {Operation} op1
+     * @param {Operation} op2
+     * @param {String} side
+     */
+    transformAddMarkRemoveMark: (op1, op2, side) => {
+        return op1;
+    },
+
+    /**
+     * [remove_mark, add_mark] transformation.
+     * @param {Operation} op1
+     * @param {Operation} op2
+     * @param {String} side
+     */
+    transformRemoveMarkAddMark: (op1, op2, side) => {
         return op1;
     },
 
