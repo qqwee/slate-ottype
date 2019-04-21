@@ -88,7 +88,7 @@ const OperationTypes = {
 const Transform = {
 
     //insert_text: ['path', 'offset', 'text', 'marks', 'data'],
-// Insert_text as first operator
+    // Insert_text as first operator
     /**
      * [insert_text, insert_text] transformation.
      * @param {Operation} op1 
@@ -148,6 +148,60 @@ const Transform = {
             return op1;
         }
     },
+
+    transformRemoveTextRemoveText(op1, op2, side) {
+        const pathCompare = PathUtils.compare(op1.get('path'), op2.get('path'));
+        if (pathCompare === 0) {
+            const op1Len = op1.get('text').length;
+            const op1StartPoint = op1.get('offset');
+            const op1EndPoint = op1StartPoint + op1Len;
+
+            const op2Len = op2.get('text').length;
+            const op2StartPoint = op2.get('offset');
+            const op2EndPoint = op2StartPoint + op2Len;
+
+            // if op1 happens completely before op2
+            // no transforming is needed
+            if (op1EndPoint <= op2StartPoint) {
+                return op1;
+            }
+            // if op1 happens completely after op2
+            // just shift the offset by the length of op2's text
+            if (op1StartPoint >= op2EndPoint) {
+                return Operation.create({
+                    object: 'operation',
+                    type: 'remove_text',
+                    path: op1.get('path'),
+                    offset: op1.get('offset') - op2.get('text').length,
+                    text: op1.get('text'),
+                    marks: op1.get('marks'),
+                    data: op1.get('data')
+                });
+            }
+
+            // otherwise handle complicated overlap
+            // calculate left and right text
+            // and shift operation by the difference in starting pionts
+            const leftTextEnd = Math.max(op2StartPoint - op1StartPoint, 0);
+            const leftText = op1.get('text').slice(0, leftTextEnd);
+            const rightTextStart = Math.min(op1Len, op1Len - (op1EndPoint - op2EndPoint));
+            const rightText = op1.get('text').slice(rightTextStart, op1Len);
+
+            return Operation.create({
+                object: 'operation',
+                type: 'remove_text',
+                path: op1.get('path'),
+                offset: op1.get('offset') - Math.max(0, op1StartPoint - op2StartPoint),
+                text: leftText + rightText,
+                marks: op1.get('marks'),
+                data: op1.get('data') 
+            });
+        }
+
+        return op1;
+    },
+
+
     /**
      * [insert_text, add_mark] transformation.
      * @param {Operation} op1
@@ -155,22 +209,18 @@ const Transform = {
      * @param {String} side
      */
     transformInsTextAddMark: (op1, op2, side) => {
-        console.log('transformInsTextAddMark', op1.toJSON(), op2.toJSON());
         const pathCompare = PathUtils.compare(op1.get('path'), op2.get('path'));
         if (pathCompare === 0) {
             // insert text happens completely before mark
             if (op1.get('offset') <= op2.get('offset')) {
-                console.log('transformInsTextAddMark before');
                 return op1;
             } 
             // insert text happens completely after mark
             else if (op1.get('offset') >= op2.get('offset') + op2.get('length')) {
-                console.log('transformInsTextAddMark after');
                 return op1;
             }
             // insert text happens overlapping mark
             else {
-                console.log('transformInsTextAddMark overlapping');
                 const mark = op2.get('mark');
                 let newMarks = op1.get('marks');
                 newMarks = newMarks.add(Mark.create({ type: mark.type, data: {}}));
@@ -196,17 +246,14 @@ const Transform = {
      * @param {String} side
      */
     transformAddMarkInsText: (op1, op2, side) => {
-        console.log('transformAddMarkInsText', op1.toJSON(), op2.toJSON());
         const pathCompare = PathUtils.compare(op1.get('path'), op2.get('path'));
         if (pathCompare === 0) {
             // add mark happens completely before insert
             if (op1.get('offset') + op1.get('length') <= op2.get('offset')) {
-                console.log('transformAddMarkInsText before');
                 return op1;
             }
             // add mark happens overlapping insert text
             else if (op1.get('offset') < op2.get('offset')) {
-                console.log('transformAddMarkInsText overlapping');
                 return Operation.create({
                     object: 'operation',
                     type: 'add_mark',
@@ -219,7 +266,6 @@ const Transform = {
             }
             // add mark happens completely after insert
             else {
-                console.log('transformAddMarkInsText after');
                 return Operation.create({
                     object: 'operation',
                     type: 'add_mark',

@@ -1,5 +1,5 @@
 import { testDoc } from './fuzzer.test';
-import { generateRandomAddMarkOp, generateRandomOp } from './op-generator';
+import { generateRandomAddMarkOp, generateRandomOp, generateRandomInsertTextOp, generateRandomRemoveText } from './op-generator';
 import slateType from '../SlateType';
 import CustomFuzzer from './custom-fuzzer';
 
@@ -47,31 +47,5 @@ assert(addMarkFuzzer.singleTransformCheck({ op1, op2, side: 'left' }), 'add_mark
 assert(addMarkFuzzer.singleTransformCheck({ op1, op2, side: 'right' }), 'add_mark, add_mark right');
 console.log('========= PASSED =========');
 
-console.log(JSON.stringify(slateType.type.serialize(addMarkFuzzer.start())));
-
-// Uncomment to see how two add_mark add_mark fails
-// without lead mark sorting
-// without sorting leaf marks
-// slateType.type.apply = function(snapshot, op) {
-//   let value = Value.create(snapshot);
-//   const operation = Operation.create(op);
-//   value = operation.apply(value);
-//   // value = Value.create(normalizeSnapShot(value));
-//   return value;
-// }
-
-// console.log("add_mark, add_mark noSort tests");
-// cf.singleTransformCheck({ op1, op2, side: 'left' });
-// cf.singleTransformCheck({ op1, op2, side: 'right' });
-
-const basicFuzzer = new CustomFuzzer({
-  otType: slateType.type,
-  iterations: 100,
-  generateRandomOp,
-});
-
-let i = 0;
-while (i < 100) {
-  basicFuzzer.start();
-  i++;
-}
+// run remaining add mark tests
+addMarkFuzzer.start();
