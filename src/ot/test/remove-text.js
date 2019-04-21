@@ -20,13 +20,18 @@ const removeFuzzer = new CustomFuzzer({
   otType: slateType.type,
   iterations: 1000,
   generateRandomOp: (snapshot) => {
-    counter++;
-    if (counter < 3) {
-      return generateRandomRemoveText(snapshot);
+    let op = null;
+
+    // alternate so that we create two remove text ops
+    // followed by two insert text ops
+    if ((counter % 4) < 2) {
+      op = generateRandomRemoveText(snapshot);
     } else {
-      if (counter === 4) counter = 0;
-      return generateRandomInsertTextOp(snapshot);
+      op = generateRandomInsertTextOp(snapshot);
     }
+    
+    counter++;
+    return op;
   },
 })
 removeFuzzer.start();
