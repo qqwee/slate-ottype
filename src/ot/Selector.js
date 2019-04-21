@@ -89,6 +89,7 @@ const Selector = {
                 case (OperationTypes.REMOVE_TEXT):
                 case (OperationTypes.SET_MARK):
                 case (OperationTypes.REMOVE_MARK):
+                    return Transform.transformAddMarkRemoveMark(op1, op2, side);
                 case (OperationTypes.INSERT_NODE):
                 case (OperationTypes.MERGE_NODE):
                 case (OperationTypes.MOVE_NODE):
@@ -103,10 +104,13 @@ const Selector = {
         } else if (op1.type === OperationTypes.REMOVE_MARK) {
             switch (op2.type) {
                 case (OperationTypes.INSERT_TEXT):
+                    return Transform.transformRemoveMarkInsText(op1, op2, side);
                 case (OperationTypes.REMOVE_TEXT):
                 case (OperationTypes.ADD_MARK):
+                    return Transform.transformRemoveMarkAddMark(op1, op2, side);
                 case (OperationTypes.SET_MARK):
                 case (OperationTypes.REMOVE_MARK):
+                    return Transform.transformRemoveMarkRemoveMark(op1, op2, side);
                 case (OperationTypes.INSERT_NODE):
                 case (OperationTypes.MERGE_NODE):
                 case (OperationTypes.MOVE_NODE):
