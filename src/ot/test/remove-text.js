@@ -2,6 +2,7 @@ import { testDoc } from './fuzzer.test';
 import { generateRandomInsertTextOp, generateRandomRemoveText } from './op-generator';
 import slateType from '../SlateType';
 import CustomFuzzer from './custom-fuzzer';
+const fuzzer = require('ot-fuzzer');
 
 const Value = slateType.Value;
 
@@ -14,23 +15,25 @@ slateType.type.create = function(init) {
   return Value.create(init);
 };
 
-let counter = 0;
 // remove text tests
 const removeFuzzer = new CustomFuzzer({
   otType: slateType.type,
-  iterations: 1000,
+  iterations: 2000,
   generateRandomOp: (snapshot) => {
     let op = null;
 
-    // alternate so that we create two remove text ops
-    // followed by two insert text ops
-    if ((counter % 4) < 2) {
-      op = generateRandomRemoveText(snapshot);
-    } else {
-      op = generateRandomInsertTextOp(snapshot);
+    // generate either a insert text or remove text
+    // since for now these are the only transforms that
+    // have been written
+    switch(fuzzer.randomInt(2)) {
+      case 0:
+        op = generateRandomRemoveText(snapshot);
+        break;
+      case 1:
+        op = generateRandomInsertTextOp(snapshot);
+        break;
+      default:
     }
-    
-    counter++;
     return op;
   },
 })

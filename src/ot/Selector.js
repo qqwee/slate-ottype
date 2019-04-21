@@ -66,6 +66,7 @@ const Selector = {
                 case (OperationTypes.REMOVE_TEXT):
                     return Transform.transformRemoveTextRemoveText(op1, op2, side);
                 case (OperationTypes.INSERT_TEXT):
+                    return Transform.transformRemoveTextInsertText(op1, op2, side);
                 case (OperationTypes.ADD_MARK):
                 case (OperationTypes.SET_MARK):
                 case (OperationTypes.REMOVE_MARK):

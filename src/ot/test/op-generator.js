@@ -4,7 +4,7 @@ import fuzzer from 'ot-fuzzer';
 const Value = slateType.Value;
 const Operation = slateType.Operation;
 
-const AVAILIBLE_OPS = ['insert_text', 'add_mark'];
+const AVAILIBLE_OPS = ['insert_text', 'remove_text'];
 const AVAILIBLE_OPS_LEN = AVAILIBLE_OPS.length;
 const MARKS = ['mark1', 'mark2', 'mark3', 'mark4', 'mark5'];
 
@@ -65,7 +65,7 @@ export const generateAndApplyRandomOp = function(snapshot) {
             op = generateRandomInsertTextOp(snapshot);
             break;
         case 1:
-            op = generateRandomAddMarkOp(snapshot);
+            op = generateRandomRemoveText(snapshot);
             break;
         default:
             throw Error('Error generating random op');
