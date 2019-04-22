@@ -1,9 +1,5 @@
 import { testDoc } from './fuzzer.test';
-import {
-  generateRandomAddMarkOp,
-  generateRandomRemoveMarkOp,
-  generateRandomInsertTextOp,
-} from './op-generator';
+import { generateRandomAddMarkOp, generateRandomRemoveMarkOp, generateRandomInsertTextOp } from './op-generator';
 import slateType from '../SlateType';
 import CustomFuzzer from './custom-fuzzer';
 const fuzzer = require('ot-fuzzer');
@@ -26,7 +22,7 @@ let counter = 0;
 const removeMarkFuzzer = new CustomFuzzer({
   otType: slateType.type,
   iterations: 1000,
-  generateRandomOp: (snapshot) => {
+  generateRandomOp: snapshot => {
     counter++;
     if (counter < 3) {
       return generateRandomAddMarkOp(snapshot);
@@ -35,16 +31,16 @@ const removeMarkFuzzer = new CustomFuzzer({
       return generateRandomRemoveMarkOp(snapshot);
     }
   },
-})
+});
 removeMarkFuzzer.start();
 
 // remove mark tests
 const removeMarkInsertTextFuzzer = new CustomFuzzer({
   otType: slateType.type,
   iterations: 1000,
-  generateRandomOp: (snapshot) => {
+  generateRandomOp: snapshot => {
     let op;
-    switch(fuzzer.randomInt(3)) {
+    switch (fuzzer.randomInt(3)) {
       case 0:
         console.log('insert text');
         op = generateRandomInsertTextOp(snapshot);
@@ -61,5 +57,5 @@ const removeMarkInsertTextFuzzer = new CustomFuzzer({
     }
     return op;
   },
-})
+});
 removeMarkInsertTextFuzzer.start();

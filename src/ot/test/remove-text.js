@@ -19,13 +19,13 @@ slateType.type.create = function(init) {
 const removeFuzzer = new CustomFuzzer({
   otType: slateType.type,
   iterations: 2000,
-  generateRandomOp: (snapshot) => {
+  generateRandomOp: snapshot => {
     let op = null;
 
     // generate either a insert text or remove text
     // since for now these are the only transforms that
     // have been written
-    switch(fuzzer.randomInt(2)) {
+    switch (fuzzer.randomInt(2)) {
       case 0:
         op = generateRandomRemoveText(snapshot);
         break;
@@ -36,5 +36,5 @@ const removeFuzzer = new CustomFuzzer({
     }
     return op;
   },
-})
+});
 removeFuzzer.start();

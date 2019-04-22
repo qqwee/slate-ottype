@@ -8,9 +8,9 @@ const Value = slateType.Value;
  * Overload slateType create function for easier random op generation
  */
 slateType.type.create = function(init) {
-    console.log('called create in SlateType');
-    init = testDoc;
-    return Value.create(init);
+  console.log('called create in SlateType');
+  init = testDoc;
+  return Value.create(init);
 };
 
 fuzzer(slateType.type, generateAndApplyRandomOp, 2000);
