@@ -124,29 +124,45 @@ const Transform = {
      */
     transformInsTextRemoveText: (op1, op2, side) => {
         const pathCompare = PathUtils.compare(op1.get('path'), op2.get('path'));
-        let newOffset;
         if (pathCompare === 0) {
-            if (op1.get('offset') < op2.get('offset') || (op1.get('offset') === op2.get('offset') && side === 'left')) {
+            const op1StartPoint = op1.get('offset');
+
+            const op2Len = op2.get('text').length;
+            const op2StartPoint = op2.get('offset');
+            const op2EndPoint = op2StartPoint + op2Len;
+
+            // if op1 happens completely before op2
+            // no transforming is needed
+            if (op1StartPoint <= op2StartPoint) {
                 return op1;
-            } else {
-                if (op1.get('offset') < op2.get('offset') && op1.get('offset') <= op2.get('offset')) {
-                    newOffset = op2.get('offset');
-                } else {
-                    newOffset = op1.get('offset') - op2.get('text').length;
-                }
+            }
+            // if op1 happens completely after op2
+            // just shift the offset by the length of op2's text
+            if (op1StartPoint >= op2EndPoint) {
                 return Operation.create({
                     object: 'operation',
                     type: 'insert_text',
                     path: op1.get('path'),
-                    offset: newOffset,
+                    offset: op1.get('offset') - op2.get('text').length,
                     text: op1.get('text'),
                     marks: op1.get('marks'),
                     data: op1.get('data')
                 });
             }
-        } else {
-            return op1;
+
+            // handle case where there is an overlap
+            return Operation.create({
+                object: 'operation',
+                type: 'insert_text',
+                path: op1.get('path'),
+                offset: op1.get('offset') - op2StartPoint + op1StartPoint,
+                text: '',
+                marks: op1.get('marks'),
+                data: op1.get('data')
+            });
         }
+
+        return op1;
     },
 
     transformRemoveTextRemoveText(op1, op2, side) {
@@ -501,29 +517,49 @@ const Transform = {
      */
     transformRemoveTextInsertText: (op1, op2, side) => {
         const pathCompare = PathUtils.compare(op1.get('path'), op2.get('path'));
-        let newOffset;
         if (pathCompare === 0) {
-            if (op1.get('offset') < op2.get('offset') || (op1.get('offset') === op2.get('offset') && side === 'left')) {
+            const op1Len = op1.get('text').length;
+            const op1StartPoint = op1.get('offset');
+            const op1EndPoint = op1StartPoint + op1Len;
+
+            const op2StartPoint = op2.get('offset');
+
+            // if op1 happens completely before op2
+            // no transforming is needed
+            if (op1EndPoint <= op2StartPoint) {
                 return op1;
-            } else {
-                if (op1.get('offset') < op2.get('offset') && op1.get('offset') <= op2.get('offset')) {
-                    newOffset = op2.get('offset');
-                } else {
-                    newOffset = op1.get('offset') - op2.get('text').length;
-                }
+            }
+            // if op1 happens completely after op2
+            // just shift the offset by the length of op2's text
+            if (op1StartPoint >= op2StartPoint) {
                 return Operation.create({
                     object: 'operation',
-                    type: 'insert_text',
+                    type: 'remove_text',
                     path: op1.get('path'),
-                    offset: newOffset,
+                    offset: op1.get('offset') + op2.get('text').length,
                     text: op1.get('text'),
                     marks: op1.get('marks'),
                     data: op1.get('data')
                 });
             }
-        } else {
-            return op1;
+
+            // handle the case where the remove text is surrounding
+            // the text that was inserted
+            const intersectingIndex = op2StartPoint - op1StartPoint;
+            const leftText = op1.get('text').slice(0, intersectingIndex);
+            const rightText = op1.get('text').slice(intersectingIndex, op1Len)
+            return Operation.create({
+                object: 'operation',
+                type: 'remove_text',
+                path: op1.get('path'),
+                offset: op1.get('offset'),
+                text: leftText + op2.get('text') + rightText,
+                marks: op1.get('marks'),
+                data: op1.get('data')
+            });
         }
+
+        return op1;
     },
 
     // /**

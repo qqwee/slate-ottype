@@ -13,6 +13,6 @@ slateType.type.create = function(init) {
     return Value.create(init);
 };
 
-fuzzer(slateType.type, generateAndApplyRandomOp, 100);
+fuzzer(slateType.type, generateAndApplyRandomOp, 2000);
 
 export const dummy = {};
