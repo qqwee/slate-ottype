@@ -17,7 +17,8 @@ function createDoc(callback) {
     if (err) throw err;
     if (doc.type === null) {
       console.log('Creating document');
-        doc.create({
+      doc.create(
+        {
           document: {
             nodes: [
               {
@@ -35,13 +36,15 @@ function createDoc(callback) {
                 ],
               },
             ],
-          }},
-          'slate-ot-type',
-          callback);
-        console.log('Doc.data in server');
-        console.log(doc.data);
+          },
+        },
+        'slate-ot-type',
+        callback
+      );
+      console.log('Doc.data in server');
+      console.log(doc.data);
       return;
-    }   
+    }
     callback();
   });
 }
@@ -53,7 +56,7 @@ function startServer() {
   var server = http.createServer(app);
 
   // Connect any incoming WebSocket connection to ShareDB
-  var wss = new WebSocket.Server({server: server});
+  var wss = new WebSocket.Server({ server: server });
   wss.on('connection', function(ws, req) {
     var stream = new WebSocketJSONStream(ws);
     backend.listen(stream);

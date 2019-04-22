@@ -1,5 +1,10 @@
 import { testDoc } from './fuzzer.test';
-import { generateRandomAddMarkOp, generateRandomOp, generateRandomInsertTextOp, generateRandomRemoveText } from './op-generator';
+import {
+  generateRandomAddMarkOp,
+  generateRandomOp,
+  generateRandomInsertTextOp,
+  generateRandomRemoveText,
+} from './op-generator';
 import slateType from '../SlateType';
 import CustomFuzzer from './custom-fuzzer';
 
@@ -29,7 +34,7 @@ const op1 = Operation.create({
   offset: 5,
   length: 4,
   mark: 'mark1',
-  data: {}
+  data: {},
 });
 
 const op2 = Operation.create({
@@ -39,10 +44,10 @@ const op2 = Operation.create({
   offset: 5,
   length: 4,
   mark: 'mark2',
-  data: {}
+  data: {},
 });
 
-console.log("add_mark, add_mark sorted marks test");
+console.log('add_mark, add_mark sorted marks test');
 assert(addMarkFuzzer.singleTransformCheck({ op1, op2, side: 'left' }), 'add_mark, add_mark left');
 assert(addMarkFuzzer.singleTransformCheck({ op1, op2, side: 'right' }), 'add_mark, add_mark right');
 console.log('========= PASSED =========');
