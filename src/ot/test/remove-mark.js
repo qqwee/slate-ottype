@@ -2,11 +2,9 @@ import { testDoc } from './fuzzer.test';
 import { generateRandomAddMarkOp, generateRandomRemoveMarkOp, generateRandomInsertTextOp } from './op-generator';
 import slateType from '../SlateType';
 import CustomFuzzer from './custom-fuzzer';
+
 const fuzzer = require('ot-fuzzer');
 const Value = slateType.Value;
-
-const assert = require('assert');
-const { Operation } = require('slate');
 
 /**
  * Overload slateType create function for easier random op generation
@@ -31,8 +29,8 @@ const removeMarkFuzzer = new CustomFuzzer({
       return generateRandomRemoveMarkOp(snapshot);
     }
   },
-})
-// removeMarkFuzzer.start();
+});
+removeMarkFuzzer.start();
 
 // remove mark tests
 const removeMarkInsertTextFuzzer = new CustomFuzzer({
