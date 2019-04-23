@@ -42,12 +42,6 @@ export default class CustomFuzzer {
       val1 = apply(apply(val1, op1), op2Transform);
       val2 = apply(apply(val2, op2), op1Transform);
 
-<<<<<<< Updated upstream
-      // break early if failed
-      if (!this.checkEqual(val1, val2)) {
-        return;
-      }
-=======
             // break early if failed
             if (!this.checkEqual(val1, val2)) {
                 const content = JSON.stringify({
@@ -68,7 +62,6 @@ export default class CustomFuzzer {
                 });
                 return;
             }
->>>>>>> Stashed changes
 
       console.log(`========= PASSED ${currentIteration} =========`);
       currentIteration++;
@@ -92,29 +85,6 @@ export default class CustomFuzzer {
     return this.checkEqual(val1, val2);
   }
 
-<<<<<<< Updated upstream
-  /**
-   * Check that two values are equal
-   */
-  checkEqual(val1, val2) {
-    try {
-      if (this.otType.serialize) {
-        assert.deepStrictEqual(this.otType.serialize(val1), this.otType.serialize(val2));
-      } else {
-        assert.deepStrictEqual(val1, val2);
-      }
-      return true;
-    } catch (err) {
-      console.log('========= FAILED =========');
-      console.log(err);
-      console.log('========= VAL 1 =========');
-      console.log(JSON.stringify(this.otType.serialize(val1.document), null, 2));
-      console.log('========= VAL 2 =========');
-      console.log(JSON.stringify(this.otType.serialize(val2.document), null, 2));
-      return false;
-    }
-  }
-=======
     /**
      * Check that two values are equal
      */
@@ -139,5 +109,4 @@ export default class CustomFuzzer {
             return false;
         }
     };
->>>>>>> Stashed changes
 }
