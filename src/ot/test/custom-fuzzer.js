@@ -7,8 +7,8 @@ const stateLogger = ({ prev, val1, val2, op1, op2 }) => {
     prev: prev.toJSON(),
     val1: val1.toJSON(),
     val2: val2.toJSON(),
-    op1: op1.toJSON(),
-    op2: op2.toJSON(),
+    op1: op1.map(o => o.toJSON()),
+    op2: op2.map(o => o.toJSON()),
   });
   fs.writeFile('crash-report.json', content, 'utf8', function(err) {
     if (err) {
@@ -45,8 +45,8 @@ export default class CustomFuzzer {
       // keep the value of the previous iteration for debugging
       prev = val1;
 
-      const op1 = this.generateRandomOp(val1);
-      const op2 = this.generateRandomOp(val2);
+      const op1 = [this.generateRandomOp(val1)];
+      const op2 = [this.generateRandomOp(val2)];
       const side = fuzzer.randomInt(1) === 1 ? 'left' : 'right';
       let otherSide = side === 'left' ? 'right' : 'left';
 

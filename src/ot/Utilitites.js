@@ -25,3 +25,7 @@ const sortMarksOnEachLeaf = tree => {
   }
   return tree;
 };
+
+export const isArray = obj => {
+  return Object.prototype.toString.call(obj) == '[object Array]';
+};

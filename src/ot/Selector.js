@@ -1,4 +1,5 @@
 import { Transform } from './Transformation';
+import { isArray } from './Utilitites';
 
 const OperationTypes = {
   INSERT_TEXT: 'insert_text',
@@ -22,13 +23,17 @@ const OperationTypes = {
 };
 
 const Selector = {
+  transform: (op1, op2, side) => {
+    const op = Selector._transform(op1, op2, side);
+    return isArray(op) ? op : [op];
+  },
   /**
    *
    * @param {Operator} op1
    * @param {Operator} op2
    * @param {string} side
    */
-  transform: (op1, op2, side) => {
+  _transform: (op1, op2, side) => {
     if (op1.type === OperationTypes.INSERT_TEXT) {
       switch (op2.type) {
         case OperationTypes.INSERT_TEXT:
