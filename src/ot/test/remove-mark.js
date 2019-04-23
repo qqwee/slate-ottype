@@ -31,8 +31,8 @@ const removeMarkFuzzer = new CustomFuzzer({
       return generateRandomRemoveMarkOp(snapshot);
     }
   },
-});
-removeMarkFuzzer.start();
+})
+// removeMarkFuzzer.start();
 
 // remove mark tests
 const removeMarkInsertTextFuzzer = new CustomFuzzer({
