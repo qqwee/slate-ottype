@@ -47,7 +47,7 @@ const Selector = {
         case OperationTypes.REMOVE_MARK:
           return Transform.transformInsTextRemoveMark(op1, op2, side);
         case OperationTypes.INSERT_NODE:
-          return Transform.transformInsTextInsNode(op1, op2, side);
+          return Transform.transformInsTextInsertNode(op1, op2, side);
         case OperationTypes.MERGE_NODE:
           return Transform.transformInsTextMergeNode(op1, op2, side);
         case OperationTypes.MOVE_NODE:
@@ -147,15 +147,18 @@ const Selector = {
       }
     } else if (op1.type === OperationTypes.INSERT_NODE) {
       switch (op2.type) {
+        case OperationTypes.INSERT_NODE:
+          return Transform.transformInsertNodeInsertNode(op1, op2, side);
+        case OperationTypes.REMOVE_NODE:
+          return Transform.transformInsertNodeRemoveNode(op1, op2, side);
         case OperationTypes.INSERT_TEXT:
+          return Transform.transformInsertNodeInsertText(op1, op2, side);
         case OperationTypes.REMOVE_TEXT:
         case OperationTypes.ADD_MARK:
         case OperationTypes.SET_MARK:
         case OperationTypes.REMOVE_MARK:
-        case OperationTypes.INSERT_NODE:
         case OperationTypes.MERGE_NODE:
         case OperationTypes.MOVE_NODE:
-        case OperationTypes.REMOVE_NODE:
         case OperationTypes.SET_NODE:
         case OperationTypes.SPLIT_NODE:
         case OperationTypes.SET_SELECTION:
@@ -201,15 +204,18 @@ const Selector = {
       }
     } else if (op1.type === OperationTypes.REMOVE_NODE) {
       switch (op2.type) {
+        case OperationTypes.REMOVE_NODE:
+          return Transform.transformRemoveNodeRemoveNode(op1, op2, side);
+        case OperationTypes.INSERT_NODE:
+          return Transform.transformRemoveNodeInsertNode(op1, op2, side);
         case OperationTypes.INSERT_TEXT:
+          return Transform.transformRemoveNodeInsertText(op1, op2, side);
         case OperationTypes.REMOVE_TEXT:
         case OperationTypes.ADD_MARK:
         case OperationTypes.SET_MARK:
         case OperationTypes.REMOVE_MARK:
-        case OperationTypes.INSERT_NODE:
         case OperationTypes.MERGE_NODE:
         case OperationTypes.MOVE_NODE:
-        case OperationTypes.REMOVE_NODE:
         case OperationTypes.SET_NODE:
         case OperationTypes.SPLIT_NODE:
         case OperationTypes.SET_SELECTION:

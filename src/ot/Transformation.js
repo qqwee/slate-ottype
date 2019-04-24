@@ -557,21 +557,162 @@ const Transform = {
     return op1;
   },
 
-  // /**
-  //  * [remove_text, remove_text] transformation.
-  //  * @param {Operation} op1
-  //  * @param {Operation} op2
-  //  * @param {String} side
-  //  */
-  // transformRemoveTextRemoveText: (op1, op2, side) => {
-  //     const pathCompare = PathUtils.compare(op1.get('path'), op2.get('path'));
-  //     let newOffset;
-  //     if (pathCompare === 0) {
+  /**
+   * [insert_node, insert_node] transformation.
+   * @param {Operation} op1
+   * @param {Operation} op2
+   * @param {String} side
+   */
+  transformInsertNodeInsertNode: (op1, op2, side) => {
+    const pathCompare = PathUtils.compare(op1.get('path'), op2.get('path'));
+    // handle ties
+    if (pathCompare === 0 || (op1.get('path').size === 0 && op2.get('path').size === 0)) {
+      if (side === 'left') {
+        return op1;
+      }
+    }
 
-  //     } else {
-  //         return op1;
-  //     }
-  // }
+    const newPathArray = PathUtils.transform(op1.get('path'), op2);
+    return Operation.create({
+      object: 'operation',
+      type: 'insert_node',
+      path: newPathArray.get(0),
+      data: op1.get('data'),
+      node: op1.get('node'),
+    });
+  },
+
+  /**
+   * [insert_node, remove_node] transformation.
+   * @param {Operation} op1
+   * @param {Operation} op2
+   * @param {String} side
+   */
+  transformInsertNodeRemoveNode: (op1, op2, side) => {
+    const newPath = PathUtils.transform(op1.get('path'), op2).get(0);
+    if (newPath) {
+      return Operation.create({
+        object: 'operation',
+        type: 'insert_node',
+        path: newPath,
+        data: op1.get('data'),
+        node: op1.get('node'),
+      });
+    }
+
+    if (PathUtils.isAbove(op2.get('path'), op1.get('path'))) {
+      return [];
+    }
+
+    return op1;
+  },
+
+  /**
+   * [insert_node, insert_text] transformation.
+   * @param {Operation} op1
+   * @param {Operation} op2
+   * @param {String} side
+   */
+  transformInsertNodeInsertText: (op1, op2, side) => {
+    return op1;
+  },
+
+  /**
+   * [insert_text, insert_node] transformation.
+   */
+  transformInsTextInsertNode: (op1, op2, side) => {
+    const newPath = PathUtils.transform(op1.get('path'), op2).get(0);
+    if (newPath) {
+      return Operation.create({
+        object: 'operation',
+        type: 'insert_text',
+        path: newPath,
+        offset: op1.get('offset'),
+        text: op1.get('text'),
+        marks: op1.get('marks'),
+        data: op1.get('data'),
+      });
+    }
+
+    return op1;
+  },
+
+  /**
+   * [remove_node, insert_text] transformation.
+   * @param {Operation} op1
+   * @param {Operation} op2
+   * @param {String} side
+   */
+  transformRemoveNodeInsertText: (op1, op2, side) => {
+    return op1;
+  },
+
+  /**
+   * [insert_node, insert_text] transformation.
+   */
+  transformInsTextRemoveNode: (op1, op2, side) => {
+    const newPath = PathUtils.transform(op1.get('path'), op2).get(0);
+    if (newPath) {
+      return Operation.create({
+        object: 'operation',
+        type: 'insert_text',
+        path: newPath,
+        offset: op1.get('offset'),
+        text: op1.get('text'),
+        marks: op1.get('marks'),
+        data: op1.get('data'),
+      });
+    }
+
+    const nodeIsBeingRemoved =
+      PathUtils.isAbove(op2.get('path'), op1.get('path')) || PathUtils.compare(op1.get('path'), op2.get('path')) === 0;
+    if (nodeIsBeingRemoved) {
+      return [];
+    }
+
+    return op1;
+  },
+
+  /**
+   * [remove_node, insert_node] transformation.
+   * @param {Operation} op1
+   * @param {Operation} op2
+   * @param {String} side
+   */
+  transformRemoveNodeInsertNode: (op1, op2, side) => {
+    const newPath = PathUtils.transform(op1.get('path'), op2).get(0);
+    if (newPath) {
+      return Operation.create({
+        object: 'operation',
+        type: 'remove_node',
+        path: newPath,
+        data: op1.get('data'),
+      });
+    }
+
+    return op1;
+  },
+
+  transformRemoveNodeRemoveNode: (op1, op2, side) => {
+    const pathCompare = PathUtils.compare(op1.get('path'), op2.get('path'));
+    // handle ties
+    if (pathCompare === 0) {
+      return [];
+    }
+
+    const newPath = PathUtils.transform(op1.get('path'), op2).get(0);
+    if (newPath) {
+      return Operation.create({
+        object: 'operation',
+        type: 'remove_node',
+        path: newPath,
+        data: op1.get('data'),
+        node: op1.get('node'),
+      });
+    }
+
+    return [];
+  },
 
   //   insert_text: ['path', 'offset', 'text', 'marks', 'data'],
   //   remove_text: ['path', 'offset', 'text', 'marks', 'data'],

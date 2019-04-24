@@ -54,8 +54,17 @@ export default class CustomFuzzer {
       const op1Transform = this.otType.transform(op1, op2, side);
       const op2Transform = this.otType.transform(op2, op1, otherSide);
 
-      val1 = apply(apply(val1, op1), op2Transform);
-      val2 = apply(apply(val2, op2), op1Transform);
+      try {
+        val1 = apply(apply(val1, op1), op2Transform);
+        val2 = apply(apply(val2, op2), op1Transform);
+      } catch (err) {
+        console.log(err);
+        console.log('op1', op1 && op1.toJSON());
+        console.log('op2', op2 && op2.toJSON());
+        console.log('op1Transform', op1Transform && op1Transform.toJSON());
+        console.log('op2Transform', op2Transform && op2Transform.toJSON());
+        return;
+      }
 
       // break early if failed
       if (!this.checkEqual(val1, val2)) {
