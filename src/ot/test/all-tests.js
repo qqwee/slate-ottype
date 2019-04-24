@@ -1,10 +1,5 @@
 import { testDoc } from './fuzzer.test';
-import {
-  generateRandomAddMarkOp,
-  generateRandomOp,
-  generateRandomInsertTextOp,
-  generateRandomRemoveText,
-} from './op-generator';
+import { generateRandomOp } from './op-generator';
 import slateType from '../SlateType';
 import CustomFuzzer from './custom-fuzzer';
 

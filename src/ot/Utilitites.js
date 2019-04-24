@@ -1,5 +1,4 @@
 var { isImmutable } = require('immutable');
-var { Value } = require('slate');
 
 export const normalizeSnapShot = snapShot => {
   let o = snapShot;
@@ -27,10 +26,6 @@ const sortMarksOnEachLeaf = tree => {
   return tree;
 };
 
-// NOTE: just a simple test
-
-// import { testDoc } from './test/fuzzer.test';
-
-// const test = Value.create(testDoc);
-
-// console.log(normalizeSnapShot(test).document.nodes[0].nodes[0].leaves[0].marks);
+export const isArray = obj => {
+  return Object.prototype.toString.call(obj) == '[object Array]';
+};

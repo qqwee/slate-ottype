@@ -1,5 +1,23 @@
 const assert = require('assert');
 const fuzzer = require('ot-fuzzer');
+const fs = require('fs');
+
+const stateLogger = ({ prev, val1, val2, op1, op2 }) => {
+  const content = JSON.stringify({
+    prev: prev.toJSON(),
+    val1: val1.toJSON(),
+    val2: val2.toJSON(),
+    op1: op1.map(o => o.toJSON()),
+    op2: op2.map(o => o.toJSON()),
+  });
+  fs.writeFile('crash-report.json', content, 'utf8', function(err) {
+    if (err) {
+      console.log('An error occured while writing JSON Object to File.');
+      return console.log(err);
+    }
+    console.log('Crash report has been saved.');
+  });
+};
 
 export default class CustomFuzzer {
   constructor({ otType, iterations = 100, generateRandomOp } = {}) {
@@ -20,11 +38,15 @@ export default class CustomFuzzer {
   start() {
     let val1 = this.initialValue;
     let val2 = this.initialValue;
+    let prev;
 
     let currentIteration = 0;
     while (currentIteration < this.iterations) {
-      const op1 = this.generateRandomOp(val1);
-      const op2 = this.generateRandomOp(val2);
+      // keep the value of the previous iteration for debugging
+      prev = val1;
+
+      const op1 = [this.generateRandomOp(val1)];
+      const op2 = [this.generateRandomOp(val2)];
       const side = fuzzer.randomInt(1) === 1 ? 'left' : 'right';
       let otherSide = side === 'left' ? 'right' : 'left';
 
@@ -37,6 +59,7 @@ export default class CustomFuzzer {
 
       // break early if failed
       if (!this.checkEqual(val1, val2)) {
+        stateLogger({ prev, val1, val2, op1, op2 });
         return;
       }
 

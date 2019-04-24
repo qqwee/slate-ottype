@@ -1,6 +1,6 @@
 /* eslint-disable */
 import { Selector } from './Selector';
-import { normalizeSnapShot } from './Utilitites';
+import { normalizeSnapShot, isArray } from './Utilitites';
 
 var { Value, Operation } = require('slate');
 var { PathUtils } = require('slate');
@@ -20,15 +20,17 @@ const slateType = {
     },
     apply: function(snapshot, op) {
       let value = Value.create(snapshot);
-      const operation = Operation.create(op);
-      value = operation.apply(value);
+      op.forEach(o => {
+        const operation = Operation.create(o);
+        value = operation.apply(value);
+      });
       value = Value.create(normalizeSnapShot(value));
       return value;
     },
     transform: function(op1, op2, side) {
-      op1 = Operation.create(op1);
-      op2 = Operation.create(op2);
-      return Selector.transform(op1, op2, side);
+      op1 = op1.map(o => Operation.create(o));
+      op2 = op2.map(o => Operation.create(o));
+      return slateType.transformOpLists(op1, op2, side);
     },
     serialize: function(snapshot) {
       if (isImmutable(snapshot)) {
@@ -39,6 +41,9 @@ const slateType = {
     },
     deserialize: function(data) {
       return Value.fromJSON(data);
+    },
+    normalize: function(op) {
+      return isArray(op) ? op : [op];
     },
     /**
          * TODO:
@@ -51,6 +56,23 @@ const slateType = {
             }
          */
   },
+};
+
+slateType.transformOpLists = function(op1, op2, side) {
+  let transformedOps = [];
+  for (let i = 0; i < op1.length; i++) {
+    let leftOp = op1[i];
+    for (let j = 0; j < op2.length; j++) {
+      const rightOp = op2[j];
+      leftOp = Selector.transform(leftOp, rightOp, side);
+      if (isArray(leftOp) && leftOp.length > 1) {
+        leftOp = slateType.transformOpLists(leftOp, op2.slice(j), side);
+        break;
+      }
+    }
+    transformedOps = [...transformedOps, ...leftOp];
+  }
+  return transformedOps;
 };
 
 export default slateType;
