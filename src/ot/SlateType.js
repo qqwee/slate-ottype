@@ -70,8 +70,14 @@ slateType.transformOpLists = function(op1, op2, side) {
         break;
       }
     }
-    transformedOps = [...transformedOps, ...leftOp];
+
+    if (isArray(leftOp)) {
+      transformedOps = [...transformedOps, ...leftOp];
+    } else {
+      transformedOps = [...transformedOps, leftOp];
+    }
   }
+
   return transformedOps;
 };
 

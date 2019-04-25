@@ -43,11 +43,6 @@ export const getRandomNodePath = tree => {
   let currentNode = tree;
   // generate a random int to see if you will continue
   while (path.length === 0 || fuzzer.randomInt(3) > 0) {
-    if (!currentNode.nodes && path.length === 0) {
-      path.push(0);
-      return path;
-    }
-
     // stop when you get to a leaf
     if (!currentNode.nodes) {
       return path;
@@ -56,7 +51,6 @@ export const getRandomNodePath = tree => {
     if (currentNode.nodes.size === 0) {
       if (path.length === 0) {
         path.push(0);
-        return path;
       }
 
       return path;
@@ -111,13 +105,13 @@ export const generateAndApplyRandomOp = function(snapshot) {
       op = generateRandomInsertTextOp(snapshot);
       break;
     case 1:
-      op = generateRandomRemoveText(snapshot);
+      op = generateRandomRemoveTextOp(snapshot);
       break;
     default:
       throw Error('Error generating random op');
   }
   const newSnapshot = op.apply(value);
-  return [op, newSnapshot];
+  return [[op], newSnapshot];
 };
 
 /**
@@ -135,19 +129,10 @@ export const generateRandomInsertTextOp = (
   snapshot,
   randomLeaf = getRandomLeafWithPath(snapshot.toJSON().document)
 ) => {
-  let randomPath;
-  let offset = 0;
-  let marks = [];
-  if (randomLeaf) {
-    // get random leaf path and find the node above it
-    randomPath = randomLeaf.path;
-    randomPath = randomPath.slice(0, randomPath.length - 1);
-
-    offset = fuzzer.randomInt(randomLeaf.text.length);
-    marks = [...randomLeaf.marks];
-  } else {
-    randomPath = getRandomNodePath(snapshot.document);
-  }
+  // get random leaf path and find the node above it
+  const randomPath = randomLeaf.path.slice(0, randomLeaf.path.length - 1);
+  const offset = fuzzer.randomInt(randomLeaf.text.length);
+  const marks = [...randomLeaf.marks];
 
   const op = Operation.create({
     object: 'operation',
@@ -162,10 +147,11 @@ export const generateRandomInsertTextOp = (
 };
 
 // remove_text: ['path', 'offset', 'text', 'marks', 'data'],
-export const generateRandomRemoveText = snapshot => {
-  const randomLeaf = getRandomLeafWithPath(snapshot.toJSON().document);
+export const generateRandomRemoveTextOp = (
+  snapshot,
+  randomLeaf = getRandomLeafWithPath(snapshot.toJSON().document)
+) => {
   const randomPath = randomLeaf.path;
-
   const offset = fuzzer.randomInt(randomLeaf.text.length);
   const textLength = fuzzer.randomInt(randomLeaf.text.length - offset);
   const text = randomLeaf.text.slice(offset, textLength);
@@ -183,8 +169,7 @@ export const generateRandomRemoveText = snapshot => {
 };
 
 // add_mark: ['path', 'offset', 'length', 'mark', 'data'],
-export const generateRandomAddMarkOp = snapshot => {
-  const randomLeaf = getRandomLeafWithPath(snapshot.toJSON().document);
+export const generateRandomAddMarkOp = (snapshot, randomLeaf = getRandomLeafWithPath(snapshot.toJSON().document)) => {
   const randomPath = randomLeaf.path;
 
   const offset = fuzzer.randomInt(randomLeaf.text.length);
