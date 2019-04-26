@@ -24,3 +24,4 @@ basicFuzzer.start();
 
 require('./add-mark');
 require('./remove-text');
+require('./insert-node');
