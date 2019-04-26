@@ -121,9 +121,11 @@ const Selector = {
         case OperationTypes.REMOVE_MARK:
           return Transform.transformRemoveMarkRemoveMark(op1, op2, side);
         case OperationTypes.INSERT_NODE:
+          return Transform.transformRemoveMarkInsertNode(op1, op2, side);
+        case OperationTypes.REMOVE_NODE:
+          return Transform.transformRemoveMarkRemoveNode(op1, op2, side);
         case OperationTypes.MERGE_NODE:
         case OperationTypes.MOVE_NODE:
-        case OperationTypes.REMOVE_NODE:
         case OperationTypes.SET_NODE:
         case OperationTypes.SPLIT_NODE:
         case OperationTypes.SET_SELECTION:
@@ -161,8 +163,9 @@ const Selector = {
           return Transform.transformInsertNodeRemoveText(op1, op2, side);
         case OperationTypes.ADD_MARK:
           return Transform.transformInsertNodeAddMark(op1, op2, side);
-        case OperationTypes.SET_MARK:
         case OperationTypes.REMOVE_MARK:
+          return Transform.transformInsertNodeRemoveMark(op1, op2, side);
+        case OperationTypes.SET_MARK:
         case OperationTypes.MERGE_NODE:
         case OperationTypes.MOVE_NODE:
         case OperationTypes.SET_NODE:
@@ -220,8 +223,9 @@ const Selector = {
           return Transform.transformRemoveNodeRemoveText(op1, op2, side);
         case OperationTypes.ADD_MARK:
           return Transform.transformRemoveNodeAddMark(op1, op2, side);
-        case OperationTypes.SET_MARK:
         case OperationTypes.REMOVE_MARK:
+          return Transform.transformRemoveNodeRemoveMark(op1, op2, side);
+        case OperationTypes.SET_MARK:
         case OperationTypes.MERGE_NODE:
         case OperationTypes.MOVE_NODE:
         case OperationTypes.SET_NODE:

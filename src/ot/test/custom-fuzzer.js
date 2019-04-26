@@ -19,6 +19,11 @@ const stateLogger = ({ prev, val1, val2, op1, op2 }) => {
   });
 };
 
+const opLogger = (name, op) => {
+  const content = JSON.stringify(op.map(o => o.toJSON()), null, 2);
+  console.log(name, content);
+};
+
 export default class CustomFuzzer {
   constructor({ otType, iterations = 100, generateRandomOp } = {}) {
     this.otType = otType;
@@ -59,10 +64,10 @@ export default class CustomFuzzer {
         val2 = apply(apply(val2, op2), op1Transform);
       } catch (err) {
         console.log(err);
-        console.log('op1', op1 && op1.toJSON());
-        console.log('op2', op2 && op2.toJSON());
-        console.log('op1Transform', op1Transform && op1Transform.toJSON());
-        console.log('op2Transform', op2Transform && op2Transform.toJSON());
+        opLogger('op1', op1);
+        opLogger('op2', op2);
+        opLogger('op1Transform', op1Transform);
+        opLogger('op2Transform', op2Transform);
         return;
       }
 

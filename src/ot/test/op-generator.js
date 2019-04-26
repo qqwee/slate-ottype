@@ -186,8 +186,10 @@ export const generateRandomAddMarkOp = (snapshot, randomLeaf = getRandomLeafWith
 };
 
 // remove_mark: ['path', 'offset', 'length', 'mark', 'data'],
-export const generateRandomRemoveMarkOp = snapshot => {
-  const randomLeaf = getRandomLeafWithPath(snapshot.toJSON().document);
+export const generateRandomRemoveMarkOp = (
+  snapshot,
+  randomLeaf = getRandomLeafWithPath(snapshot.toJSON().document)
+) => {
   const randomPath = randomLeaf.path;
 
   const offset = fuzzer.randomInt(randomLeaf.text.length);

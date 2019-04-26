@@ -6,6 +6,7 @@ import {
   generateRandomAddMarkOp,
   getRandomLeafWithPath,
   generateRandomRemoveNodeOp,
+  generateRandomRemoveMarkOp,
 } from './op-generator';
 import slateType from '../SlateType';
 import CustomFuzzer from './custom-fuzzer';
@@ -45,12 +46,8 @@ const generateRandomOp = snapshot => {
     case 2:
       op = generateRandomInsertTextOp(snapshot, randomLeaf);
       break;
-    // todo: add support for remove_text add_mark
-    // case 3:
-    //   op = generateRandomRemoveTextOp(snapshot, randomLeaf);
-    //   break;
     case 3:
-      op = generateRandomAddMarkOp(snapshot, randomLeaf);
+      op = generateRandomRemoveTextOp(snapshot, randomLeaf);
       break;
   }
   return op;
@@ -70,5 +67,42 @@ const insertNodeFuzzer = new CustomFuzzer({
 });
 // run custom fuzzer tests
 insertNodeFuzzer.start();
+
+// test insert_node, add_mark transforms
+const insertNodeMarkFuzzer = new CustomFuzzer({
+  otType: slateType.type,
+  iterations: 1000,
+  generateRandomOp: snapshot => {
+    // don't allow for remove node ops if document is empty
+    if (snapshot.document.nodes.size === 0) {
+      return generateRandomInsertNodeOp(snapshot);
+    }
+    // make sure random leaf exists
+    // if not, insert a new node
+    const randomLeaf = getRandomLeafWithPath(snapshot.toJSON().document);
+    if (!randomLeaf) {
+      return generateRandomInsertNodeOp(snapshot);
+    }
+
+    let op;
+    switch (fuzzer.randomInt(4)) {
+      case 0:
+        op = generateRandomAddMarkOp(snapshot, randomLeaf);
+        break;
+      case 1:
+        op = generateRandomInsertNodeOp(snapshot);
+        break;
+      case 2:
+        op = generateRandomRemoveMarkOp(snapshot, randomLeaf);
+        break;
+      case 3:
+        op = generateRandomRemoveNodeOp(snapshot);
+        break;
+    }
+
+    return op;
+  },
+});
+insertNodeMarkFuzzer.start();
 
 fuzzer(slateType.type, generateAndApplyRandomOp, 300);
