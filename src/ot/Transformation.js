@@ -117,13 +117,8 @@ const OperationTypes = {
 //   split_node: ['path', 'position', 'properties', 'target', 'data'],
 // }
 const Transform = {
-  //insert_text: ['path', 'offset', 'text', 'marks', 'data'],
-  // Insert_text as first operator
   /**
    * [insert_text, insert_text] transformation.
-   * @param {Operation} op1
-   * @param {Operation} op2
-   * @param {String} side
    */
   transformInsTextInsText: (op1, op2, side) => {
     const pathCompare = PathUtils.compare(op1.get('path'), op2.get('path'));
@@ -148,9 +143,6 @@ const Transform = {
 
   /**
    * [insert_text, remove_text] transformation.
-   * @param {Operation} op1
-   * @param {Operation} op2
-   * @param {String} side
    */
   transformInsTextRemoveText: (op1, op2, side) => {
     const pathCompare = PathUtils.compare(op1.get('path'), op2.get('path'));
@@ -195,6 +187,9 @@ const Transform = {
     return op1;
   },
 
+  /**
+   * [remove_text, remove_text] transformation.
+   */
   transformRemoveTextRemoveText(op1, op2, side) {
     const pathCompare = PathUtils.compare(op1.get('path'), op2.get('path'));
     if (pathCompare === 0) {
@@ -249,9 +244,6 @@ const Transform = {
 
   /**
    * [insert_text, add_mark] transformation.
-   * @param {Operation} op1
-   * @param {Operation} op2
-   * @param {String} side
    */
   transformInsTextAddMark: (op1, op2, side) => {
     const pathCompare = PathUtils.compare(op1.get('path'), op2.get('path'));
@@ -286,9 +278,6 @@ const Transform = {
 
   /**
    * [add_mark, insert_text] transformation.
-   * @param {Operation} op1
-   * @param {Operation} op2
-   * @param {String} side
    */
   transformAddMarkInsText: (op1, op2, side) => {
     const pathCompare = PathUtils.compare(op1.get('path'), op2.get('path'));
@@ -328,9 +317,6 @@ const Transform = {
 
   /**
    * [remove_mark, insert_text] transformation.
-   * @param {Operation} op1
-   * @param {Operation} op2
-   * @param {String} side
    */
   transformRemoveMarkInsText: (op1, op2, side) => {
     const pathCompare = PathUtils.compare(op1.get('path'), op2.get('path'));
@@ -370,9 +356,6 @@ const Transform = {
 
   /**
    * [insert_text, remove_mark] transformation.
-   * @param {Operation} op1
-   * @param {Operation} op2
-   * @param {String} side
    */
   transformInsTextRemoveMark: (op1, op2, side) => {
     const pathCompare = PathUtils.compare(op1.get('path'), op2.get('path'));
@@ -406,9 +389,6 @@ const Transform = {
 
   /**
    * [add_mark, add_mark] transformation.
-   * @param {Operation} op1
-   * @param {Operation} op2
-   * @param {String} side
    */
   transformAddMarkAddMark: (op1, op2, side) => {
     return op1;
@@ -416,9 +396,6 @@ const Transform = {
 
   /**
    * [add_mark, add_mark] transformation.
-   * @param {Operation} op1
-   * @param {Operation} op2
-   * @param {String} side
    */
   transformRemoveMarkRemoveMark: (op1, op2, side) => {
     return op1;
@@ -426,9 +403,6 @@ const Transform = {
 
   /**
    * [add_mark, remove_mark] transformation.
-   * @param {Operation} op1
-   * @param {Operation} op2
-   * @param {String} side
    */
   transformAddMarkRemoveMark: (op1, op2, side) => {
     return op1;
@@ -436,111 +410,13 @@ const Transform = {
 
   /**
    * [remove_mark, add_mark] transformation.
-   * @param {Operation} op1
-   * @param {Operation} op2
-   * @param {String} side
    */
   transformRemoveMarkAddMark: (op1, op2, side) => {
     return op1;
   },
 
-  //     /**
-  //      * [insert_text, remove_mark] transformation.
-  //      * @param {Operation} op1
-  //      * @param {Operation} op2
-  //      * @param {String} side
-  //      */
-  //     static transformInsTextRemoveMark(op1, op2, side) {
-
-  //     }
-
-  //     /**
-  //      * [insert_text, set_mark] transformation.
-  //      * @param {Operation} op1
-  //      * @param {Operation} op2
-  //      * @param {String} side
-  //      */
-  //     static transformInsTextSetMark(op1, op2, side) {
-
-  //     }
-
-  //     /**
-  //      * [insert_text, insert_node] transformation.
-  //      * @param {Operation} op1
-  //      * @param {Operation} op2
-  //      * @param {String} side
-  //      */
-  //     static transformInsTextInsNode(op1, op2, side) {
-  //     }
-
-  //     /**
-  //      * [insert_text, merge_node] transformation.
-  //      * @param {Operation} op1
-  //      * @param {Operation} op2
-  //      * @param {String} side
-  //      */
-  //     static transformInsTextMergeNode(op1, op2, side) {
-  //     }
-
-  //     /**
-  //      * [insert_text, move_node] transformation.
-  //      * @param {Operation} op1
-  //      * @param {Operation} op2
-  //      * @param {String} side
-  //      */
-  //     static transformInsTextMoveNode(op1, op2, side) {
-  //     }
-
-  //     /**
-  //      * [insert_text, remove_node] transformation.
-  //      * @param {Operation} op1
-  //      * @param {Operation} op2
-  //      * @param {String} side
-  //      */
-  //     static transformInsTextRemoveNode(op1, op2, side) {
-  //     }
-
-  //     /**
-  //      * [insert_text, set_node] transformation.
-  //      * @param {Operation} op1
-  //      * @param {Operation} op2
-  //      * @param {String} side
-  //      */
-  //     static transformInsTextSetNode(op1, op2, side) {
-  //     }
-
-  //     /**
-  //      * [insert_text, split_node] transformation.
-  //      * @param {Operation} op1
-  //      * @param {Operation} op2
-  //      * @param {String} side
-  //      */
-  //     static transformInsTextSplitNode(op1, op2, side) {
-  //     }
-
-  //     /**
-  //      * [insert_text, set_selection] transformation.
-  //      * @param {Operation} op1
-  //      * @param {Operation} op2
-  //      * @param {String} side
-  //      */
-  //     static transformInsTextSetSelection(op1, op2, side) {
-  //     }
-
-  //     /**
-  //      * [insert_text, set_value] transformation.
-  //      * @param {Operation} op1
-  //      * @param {Operation} op2
-  //      * @param {String} side
-  //      */
-  //     static transformInsTextSetValue(op1, op2, side) {
-  //     }
-  //  Remove_text as first operator.
   /**
    * [remove_text, insert_text] transformation.
-   * @param {Operation} op1
-   * @param {Operation} op2
-   * @param {String} side
    */
   transformRemoveTextInsertText: (op1, op2, side) => {
     const pathCompare = PathUtils.compare(op1.get('path'), op2.get('path'));
@@ -591,9 +467,6 @@ const Transform = {
 
   /**
    * [insert_node, insert_node] transformation.
-   * @param {Operation} op1
-   * @param {Operation} op2
-   * @param {String} side
    */
   transformInsertNodeInsertNode: (op1, op2, side) => {
     const pathCompare = PathUtils.compare(op1.get('path'), op2.get('path'));
@@ -616,9 +489,6 @@ const Transform = {
 
   /**
    * [insert_node, remove_node] transformation.
-   * @param {Operation} op1
-   * @param {Operation} op2
-   * @param {String} side
    */
   transformInsertNodeRemoveNode: (op1, op2, side) => {
     const newPath = PathUtils.transform(op1.get('path'), op2).get(0);
@@ -641,9 +511,6 @@ const Transform = {
 
   /**
    * [insert_node, insert_text] transformation.
-   * @param {Operation} op1
-   * @param {Operation} op2
-   * @param {String} side
    */
   transformInsertNodeInsertText: op1 => op1,
 
@@ -661,11 +528,9 @@ const Transform = {
    * [remove_text, insert_node] transformation.
    */
   transformRemoveTextInsertNode: insertNodeTransformHelper,
+
   /**
    * [insert_node, add_mark] transformation.
-   * @param {Operation} op1
-   * @param {Operation} op2
-   * @param {String} side
    */
   transformInsertNodeAddMark: op1 => op1,
 
@@ -707,9 +572,7 @@ const Transform = {
   /**
    * [remove_node, insert_text] transformation.
    */
-  transformRemoveNodeInsertText: (op1, op2, side) => {
-    return op1;
-  },
+  transformRemoveNodeInsertText: op1 => op1,
 
   /**
    * [insert_text, remove_node] transformation.
