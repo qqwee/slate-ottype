@@ -1,7 +1,7 @@
 var { Operation, PathUtils, Mark } = require('slate');
 
-const insertNodeTransformHelper = (op1, insertNodeOp) => {
-  const newPath = PathUtils.transform(op1.get('path'), insertNodeOp).get(0);
+const nodeTransformHelper = (op1, op2) => {
+  const newPath = PathUtils.transform(op1.get('path'), op2).get(0);
   if (newPath) {
     return Operation.create({
       ...op1.toJSON(),
@@ -9,26 +9,13 @@ const insertNodeTransformHelper = (op1, insertNodeOp) => {
     });
   }
 
-  return op1;
-};
-
-const removeNodeTransformHelper = (op1, removeNodeOp) => {
-  const newPath = PathUtils.transform(op1.get('path'), removeNodeOp).get(0);
-  if (newPath) {
-    return Operation.create({
-      ...op1.toJSON(),
-      path: newPath,
-    });
-  }
-
-  const nodeIsBeingRemoved =
-    PathUtils.isAbove(removeNodeOp.get('path'), op1.get('path')) ||
-    PathUtils.compare(op1.get('path'), removeNodeOp.get('path')) === 0;
-  if (nodeIsBeingRemoved) {
+  if (op2.get('type') === 'remove_node' && PathUtils.isAbove(op2.get('path'), op1.get('path'))) {
     return [];
+  } else if (op1.get('type') === 'insert_node') {
+    return op1;
   }
 
-  return op1;
+  return [];
 };
 
 /**
@@ -477,37 +464,13 @@ const Transform = {
       }
     }
 
-    const newPathArray = PathUtils.transform(op1.get('path'), op2);
-    return Operation.create({
-      object: 'operation',
-      type: 'insert_node',
-      path: newPathArray.get(0),
-      data: op1.get('data'),
-      node: op1.get('node'),
-    });
+    return nodeTransformHelper(op1, op2);
   },
 
   /**
    * [insert_node, remove_node] transformation.
    */
-  transformInsertNodeRemoveNode: (op1, op2, side) => {
-    const newPath = PathUtils.transform(op1.get('path'), op2).get(0);
-    if (newPath) {
-      return Operation.create({
-        object: 'operation',
-        type: 'insert_node',
-        path: newPath,
-        data: op1.get('data'),
-        node: op1.get('node'),
-      });
-    }
-
-    if (PathUtils.isAbove(op2.get('path'), op1.get('path'))) {
-      return [];
-    }
-
-    return op1;
-  },
+  transformInsertNodeRemoveNode: nodeTransformHelper,
 
   /**
    * [insert_node, insert_text] transformation.
@@ -517,7 +480,7 @@ const Transform = {
   /**
    * [insert_text, insert_node] transformation.
    */
-  transformInsTextInsertNode: insertNodeTransformHelper,
+  transformInsTextInsertNode: nodeTransformHelper,
 
   /**
    * [insert_node, remove_text] transformation.
@@ -527,7 +490,7 @@ const Transform = {
   /**
    * [remove_text, insert_node] transformation.
    */
-  transformRemoveTextInsertNode: insertNodeTransformHelper,
+  transformRemoveTextInsertNode: nodeTransformHelper,
 
   /**
    * [insert_node, add_mark] transformation.
@@ -537,7 +500,7 @@ const Transform = {
   /**
    * [add_mark, insert_node] transformation.
    */
-  transformAddMarkInsertNode: insertNodeTransformHelper,
+  transformAddMarkInsertNode: nodeTransformHelper,
 
   /**
    * [insert_node, add_mark] transformation.
@@ -547,7 +510,7 @@ const Transform = {
   /**
    * [add_mark, insert_node] transformation.
    */
-  transformRemoveMarkInsertNode: insertNodeTransformHelper,
+  transformRemoveMarkInsertNode: nodeTransformHelper,
 
   /**
    * [remove_node, add_mark] transformation.
@@ -557,7 +520,7 @@ const Transform = {
   /**
    * [add_mark, remove_node] transformation.
    */
-  transformAddMarkRemoveNode: removeNodeTransformHelper,
+  transformAddMarkRemoveNode: nodeTransformHelper,
 
   /**
    * [remove_node, remove_mark] transformation.
@@ -567,7 +530,7 @@ const Transform = {
   /**
    * [remove_mark, remove_node] transformation.
    */
-  transformRemoveMarkRemoveNode: removeNodeTransformHelper,
+  transformRemoveMarkRemoveNode: nodeTransformHelper,
 
   /**
    * [remove_node, insert_text] transformation.
@@ -577,7 +540,7 @@ const Transform = {
   /**
    * [insert_text, remove_node] transformation.
    */
-  transformInsTextRemoveNode: removeNodeTransformHelper,
+  transformInsTextRemoveNode: nodeTransformHelper,
 
   /**
    * [remove_node, remove_text] transformation.
@@ -587,49 +550,17 @@ const Transform = {
   /**
    * [remove_text, remove_node] transformation.
    */
-  transformRemoveTextRemoveNode: removeNodeTransformHelper,
+  transformRemoveTextRemoveNode: nodeTransformHelper,
 
   /**
    * [remove_node, insert_node] transformation.
-   * @param {Operation} op1
-   * @param {Operation} op2
-   * @param {String} side
    */
-  transformRemoveNodeInsertNode: (op1, op2, side) => {
-    const newPath = PathUtils.transform(op1.get('path'), op2).get(0);
-    if (newPath) {
-      return Operation.create({
-        object: 'operation',
-        type: 'remove_node',
-        path: newPath,
-        data: op1.get('data'),
-      });
-    }
+  transformRemoveNodeInsertNode: nodeTransformHelper,
 
-    return op1;
-  },
-
-  transformRemoveNodeRemoveNode: (op1, op2, side) => {
-    const pathCompare = PathUtils.compare(op1.get('path'), op2.get('path'));
-    // handle ties
-    if (pathCompare === 0) {
-      return [];
-    }
-
-    const newPath = PathUtils.transform(op1.get('path'), op2).get(0);
-    if (newPath) {
-      return Operation.create({
-        object: 'operation',
-        type: 'remove_node',
-        path: newPath,
-        data: op1.get('data'),
-        node: op1.get('node'),
-      });
-    }
-
-    return [];
-  },
-
+  /**
+   * [remove_node, remove_node] transformation.
+   */
+  transformRemoveNodeRemoveNode: nodeTransformHelper,
   //   insert_text: ['path', 'offset', 'text', 'marks', 'data'],
   //   remove_text: ['path', 'offset', 'text', 'marks', 'data'],
 
