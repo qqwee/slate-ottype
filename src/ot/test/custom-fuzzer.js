@@ -19,6 +19,11 @@ const stateLogger = ({ prev, val1, val2, op1, op2 }) => {
   });
 };
 
+const opLogger = (name, op) => {
+  const content = JSON.stringify(op.map(o => o.toJSON()), null, 2);
+  console.log(name, content);
+};
+
 export default class CustomFuzzer {
   constructor({ otType, iterations = 100, generateRandomOp } = {}) {
     this.otType = otType;
@@ -54,8 +59,17 @@ export default class CustomFuzzer {
       const op1Transform = this.otType.transform(op1, op2, side);
       const op2Transform = this.otType.transform(op2, op1, otherSide);
 
-      val1 = apply(apply(val1, op1), op2Transform);
-      val2 = apply(apply(val2, op2), op1Transform);
+      try {
+        val1 = apply(apply(val1, op1), op2Transform);
+        val2 = apply(apply(val2, op2), op1Transform);
+      } catch (err) {
+        console.log(err);
+        opLogger('op1', op1);
+        opLogger('op2', op2);
+        opLogger('op1Transform', op1Transform);
+        opLogger('op2Transform', op2Transform);
+        return;
+      }
 
       // break early if failed
       if (!this.checkEqual(val1, val2)) {

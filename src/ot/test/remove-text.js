@@ -1,5 +1,5 @@
 import { testDoc } from './fuzzer.test';
-import { generateRandomInsertTextOp, generateRandomRemoveText } from './op-generator';
+import { generateRandomInsertTextOp, generateRandomRemoveTextOp } from './op-generator';
 import slateType from '../SlateType';
 import CustomFuzzer from './custom-fuzzer';
 const fuzzer = require('ot-fuzzer');
@@ -27,7 +27,7 @@ const removeFuzzer = new CustomFuzzer({
     // have been written
     switch (fuzzer.randomInt(2)) {
       case 0:
-        op = generateRandomRemoveText(snapshot);
+        op = generateRandomRemoveTextOp(snapshot);
         break;
       case 1:
         op = generateRandomInsertTextOp(snapshot);
