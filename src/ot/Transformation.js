@@ -382,7 +382,7 @@ const Transform = {
   },
 
   /**
-   * [add_mark, add_mark] transformation.
+   * [remove_mark, remove_mark] transformation.
    */
   transformRemoveMarkRemoveMark: (op1, op2, side) => {
     return op1;
