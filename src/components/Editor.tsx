@@ -4,6 +4,7 @@ import { Editor } from 'slate-react';
 import { MarkHotKey } from './Editor.plugins';
 import connection from '../modules/Connetion';
 import uuid4 from 'uuid4';
+
 const { Operation } = require('slate');
 
 const plugins = [
@@ -25,37 +26,43 @@ const MARK_TAGS = {
     strong: 'bold',
     u: 'underline',
 };
+
 interface IProps {
-    opsChanger: (o:any) => void;
+    opsChanger: (o: any) => void;
 }
 
-class EditorSlate extends React.Component<IProps, any>{
+class EditorSlate extends React.Component<IProps, any> {
     private doc;
     private userId;
     state = {
         value: Value.create({}),
-    }
+    };
     private _setDoc = () => {
         this.doc = connection.get('examples', 'richtext');
         console.log('Doc');
         console.log(this.doc);
-        this.doc.subscribe( err => {
+        this.doc.subscribe(err => {
             if (err) {
                 console.log('err' + err);
                 throw err;
             }
-            this.setState({value: Value.create(this.doc.data)});
+            this.setState({ value: Value.create(this.doc.data) });
             console.log('Successful subscription');
             console.log(this.doc.data);
             this.doc.on('op', (op, source) => {
-                console.log('incoming ops');
+                console.log('incoming ops', op);
+                console.log('Operation', Operation)
                 if (source === this.userId) return;
-                this.setState({
-                    value: Operation.create(op).apply(this.state.value),
-                });
+                const ops = Operation.createList(op)
+                ops.forEach(o => {
+                    this.setState({
+                        value: o.apply(this.state.value),
+                    });
+                })
+
             });
-          });
-    }
+        });
+    };
     componentWillMount = () => {
         if (!this.doc) {
             this._setDoc();
@@ -64,26 +71,26 @@ class EditorSlate extends React.Component<IProps, any>{
             this.userId = uuid4();
         }
     };
-    onChange = ({value, operations}) => {
+    onChange = ({ value, operations }) => {
         const { opsChanger } = this.props;
         opsChanger(operations);
         operations.forEach(o => {
             if (o.type !== 'set_selection') {
-                this.doc.submitOp(o.toJSON(), {source: this.userId});
+                this.doc.submitOp(o.toJSON(), { source: this.userId });
             }
         });
         this.setState({ value });
-    }
+    };
 
     render() {
         return (
-            <Editor
-                plugins={plugins}
-                value={this.state.value}
-                onChange={this.onChange}
-                renderNode={this.renderNode}
-                renderMark={this.renderMark}
-            />
+          <Editor
+            plugins={plugins}
+            value={this.state.value}
+            onChange={this.onChange}
+            renderNode={this.renderNode}
+            renderMark={this.renderMark}
+          />
         );
     }
 
@@ -91,21 +98,21 @@ class EditorSlate extends React.Component<IProps, any>{
         switch (props.node.type) {
             case 'code':
                 return (
-                    <pre {...props.attributes}>
+                  <pre {...props.attributes}>
                         <code>{props.children}</code>
                     </pre>
                 );
             case 'paragraph':
                 return (
-                    <p {...props.attributes} className={props.node.data.get('className')}>
-                        {props.children}
-                    </p>
+                  <p {...props.attributes} className={props.node.data.get('className')}>
+                      {props.children}
+                  </p>
                 );
             case 'quote':
                 return (
-                    <blockquote {...props.attributes}>
-                        {props.children}
-                    </blockquote>
+                  <blockquote {...props.attributes}>
+                      {props.children}
+                  </blockquote>
                 );
             default:
                 return next();
