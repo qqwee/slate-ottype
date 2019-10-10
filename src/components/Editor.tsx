@@ -34,6 +34,7 @@ interface IProps {
 class EditorSlate extends React.Component<IProps, any> {
   private doc;
   private userId;
+  private editor;
   state = {
     value: Value.create({}),
   };
@@ -50,16 +51,17 @@ class EditorSlate extends React.Component<IProps, any> {
       console.log('Successful subscription');
       console.log(this.doc.data);
       this.doc.on('op', (op, source) => {
-        console.log('incoming ops', op);
-        console.log('Operation', Operation)
         if (source === this.userId) return;
         const ops = Operation.createList(op)
+        let newValue = this.state.value
+        console.log(`Value before ops ${newValue.toJSON()}`)
         ops.forEach(o => {
-          this.setState({
-            value: o.apply(this.state.value),
-          });
+          newValue = o.apply(newValue)
+          console.log(`Apply op ${o.toJSON()} produce new value ${newValue.toJSON()}`)
         })
-
+        this.setState({
+          value: newValue,
+        });
       });
     });
   };
@@ -72,8 +74,7 @@ class EditorSlate extends React.Component<IProps, any> {
     }
   };
   onChange = ({ value, operations }) => {
-    const { opsChanger } = this.props;
-    opsChanger(operations);
+    console.log('ON_CHANGE', value.toJS(), operations.toJS())
     operations.forEach(o => {
       if (o.type !== 'set_selection') {
         this.doc.submitOp(o.toJSON(), { source: this.userId });
@@ -85,6 +86,7 @@ class EditorSlate extends React.Component<IProps, any> {
   render() {
     return (
       <Editor
+        ref={ref => this.editor = ref}
         plugins={plugins}
         value={this.state.value}
         onChange={this.onChange}

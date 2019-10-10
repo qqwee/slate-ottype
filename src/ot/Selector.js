@@ -191,7 +191,8 @@ const Selector = {
         case OperationTypes.SET_SELECTION:
         case OperationTypes.SET_VALUE:
         default:
-          throw new Error(`Unsupported operation type passed:  ${op1.type}, ${op2.type}`);
+          return op1;
+        // throw new Error(`Unsupported operation type passed:  ${op1.type}, ${op2.type}`);
       }
     } else if (op1.type === OperationTypes.MOVE_NODE) {
       switch (op2.type) {
@@ -269,7 +270,8 @@ const Selector = {
         case OperationTypes.SET_SELECTION:
         case OperationTypes.SET_VALUE:
         default:
-          throw new Error(`Unsupported operation type passed:  ${op1.type}, ${op2.type}`);
+          return op1;
+        // throw new Error(`Unsupported operation type passed:  ${op1.type}, ${op2.type}`);
       }
     } else if (op1.type === OperationTypes.SET_SELECTION) {
       switch (op2.type) {
