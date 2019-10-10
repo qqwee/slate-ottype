@@ -82,18 +82,12 @@ class EditorSlate extends React.Component<IProps, any> {
     this.setState({ value });
   };
 
-  onKeydown = (e, editor, next) => {
-    if (e.key === 'Enter') e.preventDefault()
-    else next()
-  }
-
   render() {
     return (
       <Editor
         plugins={plugins}
         value={this.state.value}
         onChange={this.onChange}
-        onKeyDown={this.onKeydown}
         renderNode={this.renderNode}
         renderMark={this.renderMark}
       />
@@ -105,8 +99,8 @@ class EditorSlate extends React.Component<IProps, any> {
       case 'code':
         return (
           <pre {...props.attributes}>
-                        <code>{props.children}</code>
-                    </pre>
+            <code>{props.children}</code>
+          </pre>
         );
       case 'paragraph':
         return (
