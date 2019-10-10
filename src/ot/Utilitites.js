@@ -5,7 +5,7 @@ export const normalizeSnapShot = snapShot => {
   if (isImmutable(snapShot)) {
     o = snapShot.toJSON();
   }
-  sortMarksOnEachLeaf(o.document);
+  // sortMarksOnEachLeaf(o.document);
   return o;
 };
 
