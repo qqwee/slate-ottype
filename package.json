@@ -35,7 +35,7 @@
     "test": "react-scripts test",
     "testot": "mocha --full-trace --inspect ot/test/fuzzer.js",
     "eject": "react-scripts eject",
-    "server": "node -r esm backend/server.js"
+    "server": "node -r esm example/backend/server.js"
   },
   "eslintConfig": {
     "extends": "react-app"
