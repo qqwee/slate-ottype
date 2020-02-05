@@ -14,12 +14,12 @@ class Stack {
     this.items = [];
     return el;
   };
-  public push = (el) => {
+  public push = (el: any) => {
     this.pop();
     this.items = [...el];
   };
 
-  public view = (dummy: (any) => any) => {
+  public view = (dummy: (any: any) => any) => {
 
     const res = this.items.map(i => {
       return dummy(i.toJSON());
@@ -33,7 +33,7 @@ class App extends Component {
     flag: 1,
   }
   private opsStack = new Stack();
-  private opsChanger = (ops) => {
+  private opsChanger = (ops: any) => {
     console.log(ops);
     this.opsStack.push(ops);
     this.state.flag ? this.setState({ flag: 0}) : this.setState({flag: 1});

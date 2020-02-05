@@ -4,6 +4,7 @@
   "description": "A simple example how to use the slate-ot library with slate-js",
   "main": "index.js",
   "dependencies": {
+    "slate-ot": "*",
     "@types/jest": "^24.0.9",
     "@types/node": "^11.10.5",
     "@types/react": "^16.8.7",
@@ -12,6 +13,7 @@
     "@types/slate-html-serializer": "^0.6.3",
     "@types/slate-plain-serializer": "^0.6.1",
     "@types/slate-react": "^0.21.0",
+    "@types/uuid": "^3.4.7",
     "esm": "^3.2.22",
     "express": "^4.16.4",
     "http": "0.0.0",

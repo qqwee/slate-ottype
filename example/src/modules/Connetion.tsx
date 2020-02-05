@@ -1,5 +1,5 @@
+const { slateType } = require('slate-ot');
 const sharedb = require('sharedb/lib/client');
-import slateType from './../ot/SlateType';
 sharedb.types.register(slateType.type);
 
 // Open WebSocket connection to ShareDB server

@@ -2,5 +2,5 @@
   "name": "slate-sharedb-prototype",
   "version": "0.1.0",
   "private": true,
-  "workspaces": ["example", "ot"]
+  "workspaces": ["example", "slate-ot"]
 }
