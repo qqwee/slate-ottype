@@ -1,7 +1,7 @@
+import { slateType } from 'slate-ot';
 var http = require('http');
 var express = require('express');
 var ShareDB = require('sharedb');
-import slateType from '../src/ot/SlateType';
 var WebSocket = require('ws');
 var WebSocketJSONStream = require('websocket-json-stream');
 

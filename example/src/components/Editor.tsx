@@ -48,10 +48,20 @@ class EditorSlate extends React.Component<IProps, any>{
             console.log('Successful subscription');
             console.log(this.doc.data);
             this.doc.on('op', (op: any, source: any) => {
-                console.log('incoming ops');
+                console.log('incoming ops', op);
+                console.log('source', source, this.userId);
                 if (source === this.userId) return;
+                let value = this.state.value;
+                if (Array.isArray(op)) {
+                    for (const o of op) {
+                        value = Operation.create(o).apply(value);
+                    }
+                } else {
+                    value =  Operation.create(op).apply(value);
+                }
+
                 this.setState({
-                    value: Operation.create(op).apply(this.state.value),
+                    value,
                 });
             });
           });
