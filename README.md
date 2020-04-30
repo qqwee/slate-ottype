@@ -2,25 +2,25 @@
 This repository is an attempt to supply SlateJS with real-time collaboration through operational transformation using ShareDB and a custom ottype.
 
 # Install
-Run
+In the root run
 ```
-    npm install
+    yarn
 ```
 
 # How to start
 To start the demo slate with a server. Run the following two commands.
 ```
-    npm start
-    npm run server
+    yarn workspace example start 
+    yarn workspace example server
 ```
 
-# Run tests for transformations using fuzzer at src/ot/test/
+# Run tests for library using fuzzer
 ```
-    node -r esm fuzzer.js
+    yarn workspace slate-ot test
 ```
 
-# Folder structure
-/src/ot/ folder contains all the code needed for operational transformation.
+# Package structure
+The package example contains a bare-bone example on how to use the slate-ot library. The package slate-ot contains the actual operation transformation logic.
 
 # Short introduction to operational transformation and ShareDB.
 Please see this short [PDF](/theory.pdf).
