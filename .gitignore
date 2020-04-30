@@ -24,3 +24,5 @@ yarn-error.log*
 
 example/node_modules
 stale-ot/node_modules
+
+slate-ot/fuzzercrash.data

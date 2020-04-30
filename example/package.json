@@ -53,7 +53,6 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "testot": "mocha --full-trace --inspect ot/test/fuzzer.js",
     "eject": "react-scripts eject",
     "server": "node -r esm example/backend/server.js"
   },
