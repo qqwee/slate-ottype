@@ -1,0 +1,65 @@
+{
+  "name": "example",
+  "version": "0.0.1",
+  "description": "A simple example how to use the slate-ot library with slate-js",
+  "main": "index.js",
+  "dependencies": {
+    "slate-ot": "*",
+    "@types/jest": "^24.0.9",
+    "@types/node": "^11.10.5",
+    "@types/react": "^16.8.7",
+    "@types/react-dom": "^16.8.2",
+    "@types/slate": "^0.44.0",
+    "@types/slate-html-serializer": "^0.6.3",
+    "@types/slate-plain-serializer": "^0.6.1",
+    "@types/slate-react": "^0.21.0",
+    "@types/uuid": "^3.4.7",
+    "esm": "^3.2.22",
+    "express": "^4.16.4",
+    "http": "0.0.0",
+    "immutable": "^4.0.0-rc.12",
+    "nodemon": "^1.18.10",
+    "react": "^16.8.4",
+    "react-dom": "^16.8.4",
+    "react-json-to-html": "0.0.3",
+    "react-scripts": "2.1.8",
+    "sharedb": "^1.0.0-beta.21",
+    "slate": "^0.44.11",
+    "slate-html-serializer": "^0.7.36",
+    "slate-react": "^0.21.17",
+    "typescript": "^3.3.3333",
+    "uuid4": "^1.1.4",
+    "websocket-json-stream": "0.0.3",
+    "ws": "^6.2.1"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ],
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "eslint-config-prettier": "^4.1.0",
+    "eslint-plugin-prettier": "^3.0.1",
+    "lodash": "^4.17.11",
+    "mocha": "^6.1.1",
+    "ot-fuzzer": "^1.2.1",
+    "prettier": "^1.17.0",
+    "prettier-eslint": "^8.8.2",
+    "ts-node": "^8.0.3"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "server": "node -r esm backend/server.js"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "author": "Felix Gast",
+  "license": "MIT",
+  "private": true
+}

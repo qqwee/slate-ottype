@@ -1,0 +1,10 @@
+{
+  "name": "slate-ot",
+  "version": "0.0.1",
+  "description": "Slate ot type to be used with share db",
+  "main": "index.js",
+  "scripts": {
+    "test": "node -r esm test/fuzzer.js"
+  },
+  "license": "MIT"
+}
