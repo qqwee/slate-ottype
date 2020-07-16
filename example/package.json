@@ -42,7 +42,7 @@
     "chai": "^4.2.0",
     "eslint-config-prettier": "^4.1.0",
     "eslint-plugin-prettier": "^3.0.1",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.19",
     "mocha": "^6.1.1",
     "ot-fuzzer": "^1.2.1",
     "prettier": "^1.17.0",
