@@ -15,7 +15,7 @@
     "@types/slate-react": "^0.21.0",
     "@types/uuid": "^3.4.7",
     "esm": "^3.2.22",
-    "express": "^4.16.4",
+    "express": "^4.17.3",
     "http": "0.0.0",
     "immutable": "^4.0.0-rc.12",
     "nodemon": "^1.18.10",
